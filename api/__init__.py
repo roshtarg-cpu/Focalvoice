@@ -14,6 +14,8 @@ from enum import Enum
 import pipecat  # noqa: F401
 
 _REAL_PIPECAT_PACKAGES = [
+    "pipecat.bus",
+    "pipecat.bus.serializers",
     "pipecat.utils",
     "pipecat.utils.context",
     "pipecat.utils.tracing",
@@ -27,6 +29,7 @@ _REAL_PIPECAT_PACKAGES = [
     "pipecat.extensions",
     "pipecat.turns",
     "pipecat.workers",
+    "pipecat.pipeline",
 ]
 for _pkg in _REAL_PIPECAT_PACKAGES:
     try:
