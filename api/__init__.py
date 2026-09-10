@@ -274,17 +274,19 @@ if not hasattr(sys.modules["pipecat.utils.tracing.setup"], "setup_tracing"):
     def setup_tracing(*a, **kw): pass
     _stub("pipecat.utils.tracing.setup", setup_tracing=setup_tracing)
 
-if not hasattr(sys.modules["pipecat.utils.tracing.service_attributes"], "add_llm_span_attributes"):
-    def add_llm_span_attributes(*a, **kw): pass
-    _stub("pipecat.utils.tracing.service_attributes", add_llm_span_attributes=add_llm_span_attributes)
+if not hasattr(sys.modules["pipecat.utils.tracing.service_attributes"], "__getattr__"):
+    def _noop_fn(*a, **kw): pass
+    _attr_mod = sys.modules["pipecat.utils.tracing.service_attributes"]
+    _attr_mod.__getattr__ = lambda name: _noop_fn
 
-if not hasattr(sys.modules["pipecat.utils.tracing.service_decorators"], "traced_gemini_live"):
-    def traced_gemini_live(fn=None, **kw):
+if not hasattr(sys.modules["pipecat.utils.tracing.service_decorators"], "__getattr__"):
+    def _noop_decorator(fn=None, **kw):
         if fn is not None:
             return fn
         def decorator(f): return f
         return decorator
-    _stub("pipecat.utils.tracing.service_decorators", traced_gemini_live=traced_gemini_live)
+    _dec_mod = sys.modules["pipecat.utils.tracing.service_decorators"]
+    _dec_mod.__getattr__ = lambda name: _noop_decorator
 
 if not hasattr(sys.modules["pipecat.utils.tracing.tracing_context"], "TracingContext"):
     class TracingContext:
