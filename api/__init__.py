@@ -247,3 +247,77 @@ if "pipecat.services.deepgram.flux" not in sys.modules:
     _stub("pipecat.services.deepgram.flux.stt",
           DeepgramFluxSTTService=type("DeepgramFluxSTTService", (), {}),
           DeepgramFluxSTTSettings=type("DeepgramFluxSTTSettings", (), {}))
+
+# ── pipecat.utils.time ───────────────────────────────────────────────────────
+if "pipecat.utils.time" not in sys.modules:
+    from datetime import datetime, timezone as _tz
+    def time_now_iso8601() -> str:
+        return datetime.now(_tz.utc).isoformat()
+    _stub("pipecat.utils.time", time_now_iso8601=time_now_iso8601)
+
+# ── pipecat.utils.text.xml_function_tag_filter ──────────────────────────────
+if "pipecat.utils.text.xml_function_tag_filter" not in sys.modules:
+    _ensure_module("pipecat.utils.text")
+    class XMLFunctionTagFilter:
+        """Stub."""
+        def __init__(self, *a, **kw): pass
+        def filter(self, text): return text
+    _stub("pipecat.utils.text.xml_function_tag_filter", XMLFunctionTagFilter=XMLFunctionTagFilter)
+
+# ── pipecat.utils.tracing.* ─────────────────────────────────────────────────
+for _m in ["pipecat.utils.tracing", "pipecat.utils.tracing.setup",
+           "pipecat.utils.tracing.service_attributes", "pipecat.utils.tracing.service_decorators",
+           "pipecat.utils.tracing.tracing_context"]:
+    _ensure_module(_m)
+
+if not hasattr(sys.modules["pipecat.utils.tracing.setup"], "setup_tracing"):
+    def setup_tracing(*a, **kw): pass
+    _stub("pipecat.utils.tracing.setup", setup_tracing=setup_tracing)
+
+if not hasattr(sys.modules["pipecat.utils.tracing.service_attributes"], "add_llm_span_attributes"):
+    def add_llm_span_attributes(*a, **kw): pass
+    _stub("pipecat.utils.tracing.service_attributes", add_llm_span_attributes=add_llm_span_attributes)
+
+if not hasattr(sys.modules["pipecat.utils.tracing.service_decorators"], "traced_gemini_live"):
+    def traced_gemini_live(fn=None, **kw):
+        if fn is not None:
+            return fn
+        def decorator(f): return f
+        return decorator
+    _stub("pipecat.utils.tracing.service_decorators", traced_gemini_live=traced_gemini_live)
+
+if not hasattr(sys.modules["pipecat.utils.tracing.tracing_context"], "TracingContext"):
+    class TracingContext:
+        """Stub."""
+        def __init__(self, *a, **kw): pass
+        def __enter__(self): return self
+        def __exit__(self, *a): pass
+    _stub("pipecat.utils.tracing.tracing_context", TracingContext=TracingContext)
+
+# ── pipecat.utils.context.llm_context_summarization ─────────────────────────
+if "pipecat.utils.context.llm_context_summarization" not in sys.modules:
+    class LLMContextSummarizationUtil:
+        """Stub."""
+        def __init__(self, *a, **kw): pass
+    class LLMContextSummaryConfig:
+        """Stub."""
+        def __init__(self, *a, **kw): pass
+    _stub("pipecat.utils.context.llm_context_summarization",
+          LLMContextSummarizationUtil=LLMContextSummarizationUtil,
+          LLMContextSummaryConfig=LLMContextSummaryConfig)
+
+# ── pipecat.bus.serializers.json ─────────────────────────────────────────────
+if "pipecat.bus.serializers.json" not in sys.modules:
+    _ensure_module("pipecat.bus")
+    _ensure_module("pipecat.bus.serializers")
+    class JSONMessageSerializer:
+        """Stub."""
+        def __init__(self, *a, **kw): pass
+    _stub("pipecat.bus.serializers.json", JSONMessageSerializer=JSONMessageSerializer)
+
+# ── pipecat.turns.user_turn_strategies (ExternalUserTurnStrategies) ──────────
+if not hasattr(sys.modules.get("pipecat.turns.user_turn_strategies", types.ModuleType("")), "ExternalUserTurnStrategies"):
+    class ExternalUserTurnStrategies:
+        """Stub."""
+    _stub("pipecat.turns.user_turn_strategies",
+          ExternalUserTurnStrategies=ExternalUserTurnStrategies)
