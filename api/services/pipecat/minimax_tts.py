@@ -7,7 +7,11 @@ here to avoid leaking sockets/FDs on shutdown.
 
 import aiohttp
 
-from pipecat.services.minimax.tts import MiniMaxHttpTTSService
+try:
+    from pipecat.services.minimax.tts import MiniMaxHttpTTSService
+except (ImportError, ModuleNotFoundError):
+    class MiniMaxHttpTTSService:
+        pass
 
 
 class MiniMaxOwnedSessionTTSService(MiniMaxHttpTTSService):
