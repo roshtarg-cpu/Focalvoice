@@ -6,7 +6,11 @@ This module contains the business logic for Asterisk ARI call operations.
 from typing import Any, Dict
 
 from loguru import logger
-from pipecat.serializers.call_strategies import HangupStrategy, TransferStrategy
+try:
+    from pipecat.serializers.call_strategies import HangupStrategy, TransferStrategy
+except (ImportError, ModuleNotFoundError):
+    class HangupStrategy: pass
+    class TransferStrategy: pass
 
 
 class ARIBridgeSwapStrategy(TransferStrategy):
