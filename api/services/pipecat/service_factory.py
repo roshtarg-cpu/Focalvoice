@@ -16,17 +16,51 @@ from api.services.pipecat.gemini_json_schema_adapter import (
 )
 from api.services.pipecat.minimax_tts import MiniMaxOwnedSessionTTSService
 from api.utils.url_security import validate_user_configured_service_url
-from pipecat.services.assemblyai.stt import AssemblyAISTTService, AssemblyAISTTSettings
-from pipecat.services.aws.llm import AWSBedrockLLMService, AWSBedrockLLMSettings
-from pipecat.services.azure.llm import AzureLLMService, AzureLLMSettings
-from pipecat.services.azure.stt import AzureSTTService, AzureSTTSettings
-from pipecat.services.azure.tts import AzureTTSService, AzureTTSSettings
-from pipecat.services.cartesia.stt import CartesiaSTTService
-from pipecat.services.cartesia.tts import (
-    CartesiaTTSService,
-    CartesiaTTSSettings,
-    GenerationConfig,
-)
+try:
+    from pipecat.services.assemblyai.stt import AssemblyAISTTService, AssemblyAISTTSettings
+except (ImportError, ModuleNotFoundError):
+    class AssemblyAISTTService: pass
+    class AssemblyAISTTSettings: pass
+
+try:
+    from pipecat.services.aws.llm import AWSBedrockLLMService, AWSBedrockLLMSettings
+except (ImportError, ModuleNotFoundError):
+    class AWSBedrockLLMService: pass
+    class AWSBedrockLLMSettings: pass
+
+try:
+    from pipecat.services.azure.llm import AzureLLMService, AzureLLMSettings
+except (ImportError, ModuleNotFoundError):
+    class AzureLLMService: pass
+    class AzureLLMSettings: pass
+
+try:
+    from pipecat.services.azure.stt import AzureSTTService, AzureSTTSettings
+except (ImportError, ModuleNotFoundError):
+    class AzureSTTService: pass
+    class AzureSTTSettings: pass
+
+try:
+    from pipecat.services.azure.tts import AzureTTSService, AzureTTSSettings
+except (ImportError, ModuleNotFoundError):
+    class AzureTTSService: pass
+    class AzureTTSSettings: pass
+
+try:
+    from pipecat.services.cartesia.stt import CartesiaSTTService
+except (ImportError, ModuleNotFoundError):
+    class CartesiaSTTService: pass
+
+try:
+    from pipecat.services.cartesia.tts import (
+        CartesiaTTSService,
+        CartesiaTTSSettings,
+        GenerationConfig,
+    )
+except (ImportError, ModuleNotFoundError):
+    class CartesiaTTSService: pass
+    class CartesiaTTSSettings: pass
+    class GenerationConfig: pass
 from pipecat.services.deepgram.flux.stt import (
     DeepgramFluxSTTService,
     DeepgramFluxSTTSettings,
@@ -37,20 +71,45 @@ from pipecat.services.dograh.flux.stt import DograhFluxSTTService
 from pipecat.services.dograh.llm import DograhLLMService
 from pipecat.services.dograh.stt import DograhSTTService, DograhSTTSettings
 from pipecat.services.dograh.tts import DograhTTSService, DograhTTSSettings
-from pipecat.services.elevenlabs.tts import ElevenLabsTTSService, ElevenLabsTTSSettings
+try:
+    from pipecat.services.elevenlabs.tts import ElevenLabsTTSService, ElevenLabsTTSSettings
+except (ImportError, ModuleNotFoundError):
+    class ElevenLabsTTSService: pass
+    class ElevenLabsTTSSettings: pass
 try:
     from pipecat.services.gladia.stt import GladiaSTTService, GladiaSTTSettings
 except (ImportError, ModuleNotFoundError):
     class GladiaSTTService: pass
     class GladiaSTTSettings: pass
-from pipecat.services.google.llm import GoogleLLMService, GoogleLLMSettings
-from pipecat.services.google.stt import GoogleSTTService, GoogleSTTSettings
-from pipecat.services.google.tts import GoogleTTSService, GoogleTTSSettings
-from pipecat.services.google.vertex.llm import (
-    GoogleVertexLLMService,
-    GoogleVertexLLMSettings,
-)
-from pipecat.services.groq.llm import GroqLLMService, GroqLLMSettings
+try:
+    from pipecat.services.google.llm import GoogleLLMService, GoogleLLMSettings
+except (ImportError, ModuleNotFoundError):
+    class GoogleLLMService: pass
+    class GoogleLLMSettings: pass
+
+try:
+    from pipecat.services.google.stt import GoogleSTTService, GoogleSTTSettings
+except (ImportError, ModuleNotFoundError):
+    class GoogleSTTService: pass
+    class GoogleSTTSettings: pass
+
+try:
+    from pipecat.services.google.tts import GoogleTTSService, GoogleTTSSettings
+except (ImportError, ModuleNotFoundError):
+    class GoogleTTSService: pass
+    class GoogleTTSSettings: pass
+
+try:
+    from pipecat.services.google.vertex.llm import GoogleVertexLLMService, GoogleVertexLLMSettings
+except (ImportError, ModuleNotFoundError):
+    class GoogleVertexLLMService: pass
+    class GoogleVertexLLMSettings: pass
+
+try:
+    from pipecat.services.groq.llm import GroqLLMService, GroqLLMSettings
+except (ImportError, ModuleNotFoundError):
+    class GroqLLMService: pass
+    class GroqLLMSettings: pass
 
 try:
     from pipecat.services.huggingface.llm import HuggingFaceLLMService, HuggingFaceLLMSettings
@@ -70,8 +129,16 @@ except (ImportError, ModuleNotFoundError):
     class InworldTTSService: pass
     class InworldTTSSettings: pass
 
-from pipecat.services.minimax.llm import MiniMaxLLMService
-from pipecat.services.minimax.tts import MiniMaxTTSSettings
+try:
+    from pipecat.services.minimax.llm import MiniMaxLLMService
+except (ImportError, ModuleNotFoundError):
+    class MiniMaxLLMService: pass
+
+try:
+    from pipecat.services.minimax.tts import MiniMaxTTSSettings
+except (ImportError, ModuleNotFoundError):
+    class MiniMaxTTSSettings: pass
+
 from pipecat.services.openai._constants import OPENAI_SAMPLE_RATE
 from pipecat.services.openai.base_llm import OpenAILLMSettings
 from pipecat.services.openai.llm import OpenAILLMService
@@ -80,7 +147,12 @@ from pipecat.services.openai.stt import (
     OpenAISTTSettings,
 )
 from pipecat.services.openai.tts import OpenAITTSService, OpenAITTSSettings
-from pipecat.services.openrouter.llm import OpenRouterLLMService, OpenRouterLLMSettings
+
+try:
+    from pipecat.services.openrouter.llm import OpenRouterLLMService, OpenRouterLLMSettings
+except (ImportError, ModuleNotFoundError):
+    class OpenRouterLLMService: pass
+    class OpenRouterLLMSettings: pass
 
 try:
     from pipecat.services.rime.tts import RimeTTSService, RimeTTSSettings
