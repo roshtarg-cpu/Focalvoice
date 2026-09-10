@@ -1,7 +1,7 @@
 """
 Inject stubs for dograh-private pipecat modules before any api.* import
-triggers pipecat imports. These modules exist only in the dograh fork;
-public pipecat-ai/pipecat does not have them.
+triggers pipecat imports. These modules exist only in dograh's private pipecat
+fork; public pipecat-ai/pipecat does not ship them.
 """
 import sys
 import types
@@ -10,7 +10,7 @@ from enum import Enum
 
 
 def _ensure_module(dotted_name: str) -> types.ModuleType:
-    """Return existing module or create an empty one, registered in sys.modules."""
+    """Return existing module or create an empty one registered in sys.modules."""
     if dotted_name in sys.modules:
         return sys.modules[dotted_name]
     parts = dotted_name.split(".")
@@ -25,10 +25,15 @@ def _ensure_module(dotted_name: str) -> types.ModuleType:
     return sys.modules[dotted_name]
 
 
+def _stub(dotted_name: str, **attrs) -> None:
+    """Create a stub module and set the given attributes on it."""
+    mod = _ensure_module(dotted_name)
+    for k, v in attrs.items():
+        setattr(mod, k, v)
+
+
 # ── pipecat.utils.run_context ────────────────────────────────────────────────
 if "pipecat.utils.run_context" not in sys.modules:
-    _rc = _ensure_module("pipecat.utils.run_context")
-
     run_id_var: ContextVar = ContextVar("run_id", default=None)
     turn_var: ContextVar = ContextVar("turn", default=None)
     _org_id_var: ContextVar = ContextVar("org_id", default=None)
@@ -39,15 +44,16 @@ if "pipecat.utils.run_context" not in sys.modules:
     def set_current_org_id(v):
         _org_id_var.set(v)
 
-    _rc.run_id_var = run_id_var
-    _rc.turn_var = turn_var
-    _rc.set_current_run_id = set_current_run_id
-    _rc.set_current_org_id = set_current_org_id
+    _stub(
+        "pipecat.utils.run_context",
+        run_id_var=run_id_var,
+        turn_var=turn_var,
+        set_current_run_id=set_current_run_id,
+        set_current_org_id=set_current_org_id,
+    )
 
 # ── pipecat.utils.enums ──────────────────────────────────────────────────────
 if "pipecat.utils.enums" not in sys.modules:
-    _enums = _ensure_module("pipecat.utils.enums")
-
     class EndTaskReason(str, Enum):
         CALL_DURATION_EXCEEDED = "call_duration_exceeded"
         END_CALL_TOOL_REASON = "end_call_tool_reason"
@@ -73,14 +79,137 @@ if "pipecat.utils.enums" not in sys.modules:
         USER_MUTE_STOPPED = "user_mute_stopped"
         USER_TRANSCRIPTION = "user_transcription"
 
-    _enums.EndTaskReason = EndTaskReason
-    _enums.RealtimeFeedbackType = RealtimeFeedbackType
+    _stub("pipecat.utils.enums", EndTaskReason=EndTaskReason, RealtimeFeedbackType=RealtimeFeedbackType)
 
 # ── pipecat.utils.context.message_sanitization ───────────────────────────────
 if "pipecat.utils.context.message_sanitization" not in sys.modules:
-    _ms = _ensure_module("pipecat.utils.context.message_sanitization")
-
     def strip_thought_ids_from_messages(messages):
         return messages
+    _stub("pipecat.utils.context.message_sanitization", strip_thought_ids_from_messages=strip_thought_ids_from_messages)
 
-    _ms.strip_thought_ids_from_messages = strip_thought_ids_from_messages
+# ── pipecat.serializers.cloudonix ────────────────────────────────────────────
+if "pipecat.serializers.cloudonix" not in sys.modules:
+    try:
+        from pipecat.serializers.twilio import TwilioFrameSerializer as _TwilioFS
+        _stub("pipecat.serializers.cloudonix", CloudonixFrameSerializer=_TwilioFS)
+    except Exception:
+        class CloudonixFrameSerializer:
+            """Stub — dograh-private cloudonix serializer not available."""
+        _stub("pipecat.serializers.cloudonix", CloudonixFrameSerializer=CloudonixFrameSerializer)
+
+# ── pipecat.turns.* ──────────────────────────────────────────────────────────
+_turn_stubs = [
+    "pipecat.turns",
+    "pipecat.turns.user_mute",
+    "pipecat.turns.user_start",
+    "pipecat.turns.user_start.vad_user_turn_start_strategy",
+    "pipecat.turns.user_stop",
+    "pipecat.turns.user_turn_strategies",
+]
+for _m in _turn_stubs:
+    _ensure_module(_m)
+
+# pipecat.turns.user_mute
+if not hasattr(sys.modules.get("pipecat.turns.user_mute", types.ModuleType("")), "CallbackUserMuteStrategy"):
+    class CallbackUserMuteStrategy:
+        """Stub."""
+    class FunctionCallUserMuteStrategy:
+        """Stub."""
+    class MuteUntilFirstBotCompleteUserMuteStrategy:
+        """Stub."""
+    _stub("pipecat.turns.user_mute",
+          CallbackUserMuteStrategy=CallbackUserMuteStrategy,
+          FunctionCallUserMuteStrategy=FunctionCallUserMuteStrategy,
+          MuteUntilFirstBotCompleteUserMuteStrategy=MuteUntilFirstBotCompleteUserMuteStrategy)
+
+# pipecat.turns.user_start
+if not hasattr(sys.modules.get("pipecat.turns.user_start", types.ModuleType("")), "ExternalUserTurnStartStrategy"):
+    class ExternalUserTurnStartStrategy:
+        """Stub."""
+    class TranscriptionUserTurnStartStrategy:
+        """Stub."""
+    _stub("pipecat.turns.user_start",
+          ExternalUserTurnStartStrategy=ExternalUserTurnStartStrategy,
+          TranscriptionUserTurnStartStrategy=TranscriptionUserTurnStartStrategy)
+
+# pipecat.turns.user_start.vad_user_turn_start_strategy
+if not hasattr(sys.modules.get("pipecat.turns.user_start.vad_user_turn_start_strategy", types.ModuleType("")), "VADUserTurnStartStrategy"):
+    class VADUserTurnStartStrategy:
+        """Stub."""
+    _stub("pipecat.turns.user_start.vad_user_turn_start_strategy",
+          VADUserTurnStartStrategy=VADUserTurnStartStrategy)
+
+# pipecat.turns.user_stop
+if not hasattr(sys.modules.get("pipecat.turns.user_stop", types.ModuleType("")), "ExternalUserTurnStopStrategy"):
+    class ExternalUserTurnStopStrategy:
+        """Stub."""
+    class SpeechTimeoutUserTurnStopStrategy:
+        """Stub."""
+    class TurnAnalyzerUserTurnStopStrategy:
+        """Stub."""
+    _stub("pipecat.turns.user_stop",
+          ExternalUserTurnStopStrategy=ExternalUserTurnStopStrategy,
+          SpeechTimeoutUserTurnStopStrategy=SpeechTimeoutUserTurnStopStrategy,
+          TurnAnalyzerUserTurnStopStrategy=TurnAnalyzerUserTurnStopStrategy)
+
+# pipecat.turns.user_turn_strategies
+if not hasattr(sys.modules.get("pipecat.turns.user_turn_strategies", types.ModuleType("")), "UserTurnStrategies"):
+    class UserTurnStrategies:
+        """Stub."""
+    _stub("pipecat.turns.user_turn_strategies", UserTurnStrategies=UserTurnStrategies)
+
+# ── pipecat.workers.runner ───────────────────────────────────────────────────
+if "pipecat.workers.runner" not in sys.modules:
+    class WorkerRunner:
+        """Stub."""
+    _ensure_module("pipecat.workers")
+    _stub("pipecat.workers.runner", WorkerRunner=WorkerRunner)
+
+# ── pipecat.extensions.voicemail.voicemail_detector ─────────────────────────
+if "pipecat.extensions.voicemail.voicemail_detector" not in sys.modules:
+    class VoicemailDetector:
+        """Stub."""
+    _ensure_module("pipecat.extensions")
+    _ensure_module("pipecat.extensions.voicemail")
+    _stub("pipecat.extensions.voicemail.voicemail_detector", VoicemailDetector=VoicemailDetector)
+
+# ── pipecat.audio.turn.smart_turn.local_smart_turn_v3 ───────────────────────
+if "pipecat.audio.turn.smart_turn.local_smart_turn_v3" not in sys.modules:
+    class LocalSmartTurnAnalyzerV3:
+        """Stub."""
+    _ensure_module("pipecat.audio.turn")
+    _ensure_module("pipecat.audio.turn.smart_turn")
+    _stub("pipecat.audio.turn.smart_turn.local_smart_turn_v3",
+          LocalSmartTurnAnalyzerV3=LocalSmartTurnAnalyzerV3)
+
+# ── pipecat.audio.turn.smart_turn.base_smart_turn ───────────────────────────
+if "pipecat.audio.turn.smart_turn.base_smart_turn" not in sys.modules:
+    class SmartTurnParams:
+        """Stub."""
+    _stub("pipecat.audio.turn.smart_turn.base_smart_turn", SmartTurnParams=SmartTurnParams)
+
+# ── pipecat.services.dograh.* ───────────────────────────────────────────────
+_dograh_stubs = {
+    "pipecat.services.dograh": {},
+    "pipecat.services.dograh.flux": {},
+    "pipecat.services.dograh.flux.stt": {"DograhFluxSTTService": type("DograhFluxSTTService", (), {})},
+    "pipecat.services.dograh.llm": {"DograhLLMService": type("DograhLLMService", (), {})},
+    "pipecat.services.dograh.stt": {
+        "DograhSTTService": type("DograhSTTService", (), {}),
+        "DograhSTTSettings": type("DograhSTTSettings", (), {}),
+    },
+    "pipecat.services.dograh.tts": {
+        "DograhTTSService": type("DograhTTSService", (), {}),
+        "DograhTTSSettings": type("DograhTTSSettings", (), {}),
+    },
+}
+for _mod, _attrs in _dograh_stubs.items():
+    if _mod not in sys.modules:
+        _stub(_mod, **_attrs)
+
+# ── pipecat.services.deepgram.flux.stt (optional) ───────────────────────────
+if "pipecat.services.deepgram.flux" not in sys.modules:
+    _ensure_module("pipecat.services.deepgram.flux")
+    _stub("pipecat.services.deepgram.flux.stt",
+          DeepgramFluxSTTService=type("DeepgramFluxSTTService", (), {}),
+          DeepgramFluxSTTSettings=type("DeepgramFluxSTTSettings", (), {}))
