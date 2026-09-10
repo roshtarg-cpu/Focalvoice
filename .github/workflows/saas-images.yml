@@ -62,10 +62,8 @@ jobs:
           docker-images: true
           swap-storage: true
 
-      - name: Checkout (with submodules)
+      - name: Checkout
         uses: actions/checkout@v4
-        with:
-          submodules: true
 
       - name: Lowercase owner
         id: owner

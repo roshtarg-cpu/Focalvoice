@@ -27,17 +27,11 @@ RUN --mount=type=bind,source=api/requirements.txt,target=/tmp/req.txt \
     --mount=type=cache,target=/root/.cache/uv \
     uv pip install -r /tmp/req.txt
 
-# Layer 2: pipecat deps. Cache invalidates when pipecat source changes.
-# After installing pipecat, two hardening tweaks:
-#   1. Swap opencv-python (pulled by pipecat[webrtc]) for opencv-python-headless.
-#      The non-headless build links against X11/Qt (libxcb*); without those
-#      shared libs in the image, `import cv2` fails at runtime.
-#   2. Pre-download NLTK's punkt_tab tokenizer so pipecat's text processing
-#      doesn't hit the network on first agent run. NLTK auto-finds it under
-#      sys.prefix/nltk_data, so it travels with the venv on COPY.
-RUN --mount=type=bind,source=pipecat,target=/tmp/pipecat,rw \
-    --mount=type=cache,target=/root/.cache/uv \
-    uv pip install '/tmp/pipecat[cartesia,deepgram,openai,elevenlabs,groq,google,azure,sarvam,soundfile,silero,webrtc,speechmatics,openrouter,camb,mcp,inworld,smallest]' \
+# Layer 2: pipecat deps from PyPI.
+# Swap opencv-python for headless build (no X11/Qt needed server-side).
+# Pre-download NLTK punkt_tab so first agent run doesn't hit the network.
+RUN --mount=type=cache,target=/root/.cache/uv \
+    uv pip install 'pipecat-ai[cartesia,deepgram,openai,elevenlabs,groq,google,azure,soundfile,silero,webrtc,speechmatics,openrouter,mcp]' \
  && uv pip uninstall opencv-python \
  && uv pip install opencv-python-headless \
  && python -c "import nltk; nltk.download('punkt_tab', download_dir='/opt/venv/nltk_data', quiet=True)"
