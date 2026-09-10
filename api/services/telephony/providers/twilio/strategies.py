@@ -8,7 +8,16 @@ from typing import Any, Dict
 
 import aiohttp
 from loguru import logger
-from pipecat.serializers.call_strategies import HangupStrategy, TransferStrategy
+try:
+    from pipecat.serializers.call_strategies import HangupStrategy, TransferStrategy
+except ImportError:
+    class HangupStrategy:
+        """Fallback stub — dograh-private call_strategies not available."""
+        pass
+
+    class TransferStrategy:
+        """Fallback stub — dograh-private call_strategies not available."""
+        pass
 
 
 class TwilioConferenceStrategy(TransferStrategy):

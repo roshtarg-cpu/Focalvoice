@@ -24,8 +24,31 @@ import numpy as np
 from loguru import logger
 from pydantic import BaseModel
 
-from pipecat.audio.dtmf.types import KeypadEntry
-from pipecat.audio.utils import alaw_to_pcm, create_stream_resampler, pcm_to_alaw
+try:
+    from pipecat.audio.dtmf.types import KeypadEntry
+except ImportError:
+    class KeypadEntry:
+        """Fallback stub."""
+        pass
+
+try:
+    from pipecat.audio.utils import alaw_to_pcm, create_stream_resampler, pcm_to_alaw
+except ImportError:
+    import audioop
+
+    def alaw_to_pcm(data: bytes) -> bytes:
+        return audioop.alaw2lin(data, 2)
+
+    def pcm_to_alaw(data: bytes) -> bytes:
+        return audioop.lin2alaw(data, 2)
+
+    def create_stream_resampler(from_rate: int, to_rate: int):
+        state = None
+        def resample(data: bytes):
+            nonlocal state
+            resampled, state = audioop.ratecv(data, 2, 1, from_rate, to_rate, state)
+            return resampled
+        return resample
 from pipecat.frames.frames import (
     AudioRawFrame,
     Frame,
