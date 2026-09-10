@@ -8,9 +8,31 @@ import types
 from contextvars import ContextVar
 from enum import Enum
 
-# Load the real pipecat package FIRST so our stubs only fill gaps,
-# never shadow the real installed package.
+# Load the real pipecat package AND its sub-packages that exist in public
+# pipecat BEFORE creating any stubs. This prevents our stub-module creator
+# from shadowing real packages with fake types.ModuleType objects.
 import pipecat  # noqa: F401
+
+_REAL_PIPECAT_PACKAGES = [
+    "pipecat.utils",
+    "pipecat.utils.context",
+    "pipecat.utils.tracing",
+    "pipecat.audio",
+    "pipecat.audio.turn",
+    "pipecat.audio.turn.smart_turn",
+    "pipecat.serializers",
+    "pipecat.services",
+    "pipecat.services.deepgram",
+    "pipecat.services.dograh",
+    "pipecat.extensions",
+    "pipecat.turns",
+    "pipecat.workers",
+]
+for _pkg in _REAL_PIPECAT_PACKAGES:
+    try:
+        __import__(_pkg)
+    except (ImportError, ModuleNotFoundError):
+        pass  # truly absent — stubs will create these below
 
 
 def _ensure_module(dotted_name: str) -> types.ModuleType:
