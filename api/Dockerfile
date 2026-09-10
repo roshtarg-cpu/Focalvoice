@@ -31,7 +31,7 @@ RUN --mount=type=bind,source=api/requirements.txt,target=/tmp/req.txt \
 # Swap opencv-python for headless build (no X11/Qt needed server-side).
 # Pre-download NLTK punkt_tab so first agent run doesn't hit the network.
 RUN --mount=type=cache,target=/root/.cache/uv \
-    uv pip install 'pipecat-ai[cartesia,deepgram,openai,elevenlabs,groq,google,azure,soundfile,silero,webrtc,speechmatics,openrouter,mcp]' \
+    uv pip install 'pipecat-ai[cartesia,deepgram,openai,elevenlabs,groq,google,azure,soundfile,silero,webrtc,speechmatics,openrouter,mcp] @ git+https://github.com/pipecat-ai/pipecat.git' \
  && uv pip uninstall opencv-python \
  && uv pip install opencv-python-headless \
  && python -c "import nltk; nltk.download('punkt_tab', download_dir='/opt/venv/nltk_data', quiet=True)"
