@@ -72,31 +72,39 @@ except ImportError:
         944, 912, 1008, 976, 816, 784, 880, 848,
     ], dtype=_np.int16)
 
-    def alaw_to_pcm(data: bytes) -> bytes:
-        samples = _np.frombuffer(data, dtype=_np.uint8)
-        return _ALAW_TABLE[samples].tobytes()
+    class _Resampler:
+        """Stateful resampler; rates are supplied per-call."""
+        def __init__(self):
+            self._buf = _np.array([], dtype=_np.int16)
+            self._ratio = None
 
-    def pcm_to_alaw(data: bytes) -> bytes:
-        # Simple linear PCM → A-law encoding using nearest-value lookup
-        samples = _np.frombuffer(data, dtype=_np.int16).astype(_np.int32)
+        def resample(self, data: bytes, from_rate: int, to_rate: int) -> bytes:
+            if from_rate == to_rate:
+                return data
+            ratio = to_rate / from_rate
+            chunk = _np.frombuffer(data, dtype=_np.int16)
+            combined = _np.concatenate([self._buf, chunk])
+            new_len = int(len(combined) * ratio)
+            if new_len == 0:
+                self._buf = combined
+                return b""
+            indices = _np.linspace(0, len(combined) - 1, new_len).astype(_np.int32).clip(0, len(combined) - 1)
+            self._buf = _np.array([], dtype=_np.int16)
+            return combined[indices].tobytes()
+
+    async def alaw_to_pcm(data: bytes, from_rate: int, to_rate: int, resampler) -> bytes:
+        samples = _np.frombuffer(data, dtype=_np.uint8)
+        pcm = _ALAW_TABLE[samples].tobytes()
+        return resampler.resample(pcm, from_rate, to_rate)
+
+    async def pcm_to_alaw(data: bytes, from_rate: int, to_rate: int, resampler) -> bytes:
+        resampled = resampler.resample(data, from_rate, to_rate)
+        samples = _np.frombuffer(resampled, dtype=_np.int16).astype(_np.int32)
         indices = _np.searchsorted(_ALAW_TABLE, samples, side='nearest').clip(0, 255)
         return indices.astype(_np.uint8).tobytes()
 
-    def create_stream_resampler(from_rate: int, to_rate: int):
-        ratio = to_rate / from_rate
-        _buf = _np.array([], dtype=_np.int16)
-        def resample(data: bytes) -> bytes:
-            nonlocal _buf
-            chunk = _np.frombuffer(data, dtype=_np.int16)
-            combined = _np.concatenate([_buf, chunk])
-            new_len = int(len(combined) * ratio)
-            if new_len == 0:
-                _buf = combined
-                return b""
-            indices = _np.linspace(0, len(combined) - 1, new_len).astype(_np.int32).clip(0, len(combined) - 1)
-            _buf = _np.array([], dtype=_np.int16)
-            return combined[indices].tobytes()
-        return resample
+    def create_stream_resampler():
+        return _Resampler()
 from pipecat.frames.frames import (
     AudioRawFrame,
     Frame,
