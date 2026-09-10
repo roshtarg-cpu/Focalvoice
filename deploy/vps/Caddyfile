@@ -1,0 +1,20 @@
+# FocalVoice Caddy config — automatic HTTPS via Let's Encrypt (sslip.io)
+
+{
+	# email you@example.com
+}
+
+api.focalvoice.34-131-30-241.sslip.io {
+	handle /voice-audio/* {
+		reverse_proxy minio:9000
+	}
+
+	handle {
+		reverse_proxy api:8000
+	}
+}
+
+app.focalvoice.34-131-30-241.sslip.io {
+	encode gzip
+	reverse_proxy ui:3010
+}

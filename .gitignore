@@ -1,0 +1,33 @@
+# FocalVoice deploy secrets — never commit real env files
+deploy/vps/.env.api
+deploy/vps/.env.ui
+
+__pycache__
+.DS_Store
+.env
+.env.prod
+.env.test
+
+# logs and run directory on production
+/logs/
+/run/
+infrastructure/
+prd/
+.vercel
+
+.devcontainer/install.local.sh
+venv/
+.venv/
+.playwright-mcp
+coturn/
+*.wav
+dograh_pcm_cache/
+node_modules/
+
+# Claude Code agent worktrees (never commit)
+.claude/worktrees/
+
+# Superpowers brainstorm mockups (local only)
+.superpowers/
+docs/superpowers/
+.gstack/
