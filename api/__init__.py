@@ -70,12 +70,20 @@ if "pipecat.utils.run_context" not in sys.modules:
     def set_current_org_id(v):
         _org_id_var.set(v)
 
+    def get_current_org_id():
+        return _org_id_var.get()
+
+    def get_current_run_id():
+        return run_id_var.get()
+
     _stub(
         "pipecat.utils.run_context",
         run_id_var=run_id_var,
         turn_var=turn_var,
         set_current_run_id=set_current_run_id,
         set_current_org_id=set_current_org_id,
+        get_current_org_id=get_current_org_id,
+        get_current_run_id=get_current_run_id,
     )
 
 # ── pipecat.utils.enums ──────────────────────────────────────────────────────
