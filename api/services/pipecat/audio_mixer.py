@@ -6,7 +6,17 @@ from loguru import logger
 
 from api.constants import APP_ROOT_DIR
 from api.services.pipecat.audio_file_cache import get_cached_ambient_noise_path
-from pipecat.audio.mixers.silence_mixer import SilenceAudioMixer
+try:
+    from pipecat.audio.mixers.silence_mixer import SilenceAudioMixer
+except ImportError:
+    from pipecat.audio.mixers.base_audio_mixer import BaseAudioMixer
+
+    class SilenceAudioMixer(BaseAudioMixer):
+        """Fallback mixer that outputs silence (no background audio)."""
+
+        async def mix(self, audio: bytes) -> bytes:
+            return audio
+
 from pipecat.audio.mixers.soundfile_mixer import SoundfileMixer
 
 librnnoise_path = os.path.normpath(
