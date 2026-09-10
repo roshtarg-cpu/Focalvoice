@@ -8,6 +8,10 @@ import types
 from contextvars import ContextVar
 from enum import Enum
 
+# Load the real pipecat package FIRST so our stubs only fill gaps,
+# never shadow the real installed package.
+import pipecat  # noqa: F401
+
 
 def _ensure_module(dotted_name: str) -> types.ModuleType:
     """Return existing module or create an empty one registered in sys.modules."""
