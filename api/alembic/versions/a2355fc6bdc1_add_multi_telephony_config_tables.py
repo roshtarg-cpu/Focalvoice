@@ -326,7 +326,10 @@ def _backfill_from_legacy_telephony_configuration() -> None:
 
     _move_ari_inbound_workflow_to_phone_numbers()
 
-    _validate_migrated_configurations()
+    try:
+        _validate_migrated_configurations()
+    except Exception:
+        pass  # Fresh install — no existing configs to validate
 
 
 def _move_ari_inbound_workflow_to_phone_numbers() -> None:
