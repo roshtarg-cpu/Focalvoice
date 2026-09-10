@@ -3,7 +3,12 @@
 from typing import Any, Dict
 
 from loguru import logger
-from pipecat.serializers.call_strategies import HangupStrategy
+try:
+    from pipecat.serializers.call_strategies import HangupStrategy
+except ImportError:
+    class HangupStrategy:
+        """Fallback stub — dograh-private call_strategies not available."""
+        pass
 
 from api.services.telephony.providers.cloudonix.provider import CLOUDONIX_API_BASE_URL
 
