@@ -38,7 +38,11 @@ from pipecat.services.dograh.llm import DograhLLMService
 from pipecat.services.dograh.stt import DograhSTTService, DograhSTTSettings
 from pipecat.services.dograh.tts import DograhTTSService, DograhTTSSettings
 from pipecat.services.elevenlabs.tts import ElevenLabsTTSService, ElevenLabsTTSSettings
-from pipecat.services.gladia.stt import GladiaSTTService, GladiaSTTSettings
+try:
+    from pipecat.services.gladia.stt import GladiaSTTService, GladiaSTTSettings
+except (ImportError, ModuleNotFoundError):
+    class GladiaSTTService: pass
+    class GladiaSTTSettings: pass
 from pipecat.services.google.llm import GoogleLLMService, GoogleLLMSettings
 from pipecat.services.google.stt import GoogleSTTService, GoogleSTTSettings
 from pipecat.services.google.tts import GoogleTTSService, GoogleTTSSettings
@@ -47,15 +51,25 @@ from pipecat.services.google.vertex.llm import (
     GoogleVertexLLMSettings,
 )
 from pipecat.services.groq.llm import GroqLLMService, GroqLLMSettings
-from pipecat.services.huggingface.llm import (
-    HuggingFaceLLMService,
-    HuggingFaceLLMSettings,
-)
-from pipecat.services.huggingface.stt import (
-    HuggingFaceSTTService,
-    HuggingFaceSTTSettings,
-)
-from pipecat.services.inworld.tts import InworldTTSService, InworldTTSSettings
+
+try:
+    from pipecat.services.huggingface.llm import HuggingFaceLLMService, HuggingFaceLLMSettings
+except (ImportError, ModuleNotFoundError):
+    class HuggingFaceLLMService: pass
+    class HuggingFaceLLMSettings: pass
+
+try:
+    from pipecat.services.huggingface.stt import HuggingFaceSTTService, HuggingFaceSTTSettings
+except (ImportError, ModuleNotFoundError):
+    class HuggingFaceSTTService: pass
+    class HuggingFaceSTTSettings: pass
+
+try:
+    from pipecat.services.inworld.tts import InworldTTSService, InworldTTSSettings
+except (ImportError, ModuleNotFoundError):
+    class InworldTTSService: pass
+    class InworldTTSSettings: pass
+
 from pipecat.services.minimax.llm import MiniMaxLLMService
 from pipecat.services.minimax.tts import MiniMaxTTSSettings
 from pipecat.services.openai._constants import OPENAI_SAMPLE_RATE
@@ -67,19 +81,66 @@ from pipecat.services.openai.stt import (
 )
 from pipecat.services.openai.tts import OpenAITTSService, OpenAITTSSettings
 from pipecat.services.openrouter.llm import OpenRouterLLMService, OpenRouterLLMSettings
-from pipecat.services.rime.tts import RimeTTSService, RimeTTSSettings
-from pipecat.services.sarvam.llm import SarvamLLMService, SarvamLLMSettings
-from pipecat.services.sarvam.stt import SarvamSTTService, SarvamSTTSettings
-from pipecat.services.sarvam.tts import SarvamTTSService, SarvamTTSSettings
-from pipecat.services.smallest.stt import SmallestSTTService, SmallestSTTSettings
-from pipecat.services.smallest.tts import SmallestTTSService, SmallestTTSSettings
-from pipecat.services.speaches.llm import SpeachesLLMService, SpeachesLLMSettings
-from pipecat.services.speaches.stt import SpeachesSTTService, SpeachesSTTSettings
-from pipecat.services.speaches.tts import SpeachesTTSService, SpeachesTTSSettings
-from pipecat.services.speechmatics.stt import (
-    SpeechmaticsSTTService,
-    SpeechmaticsSTTSettings,
-)
+
+try:
+    from pipecat.services.rime.tts import RimeTTSService, RimeTTSSettings
+except (ImportError, ModuleNotFoundError):
+    class RimeTTSService: pass
+    class RimeTTSSettings: pass
+
+try:
+    from pipecat.services.sarvam.llm import SarvamLLMService, SarvamLLMSettings
+except (ImportError, ModuleNotFoundError):
+    class SarvamLLMService: pass
+    class SarvamLLMSettings: pass
+
+try:
+    from pipecat.services.sarvam.stt import SarvamSTTService, SarvamSTTSettings
+except (ImportError, ModuleNotFoundError):
+    class SarvamSTTService: pass
+    class SarvamSTTSettings: pass
+
+try:
+    from pipecat.services.sarvam.tts import SarvamTTSService, SarvamTTSSettings
+except (ImportError, ModuleNotFoundError):
+    class SarvamTTSService: pass
+    class SarvamTTSSettings: pass
+
+try:
+    from pipecat.services.smallest.stt import SmallestSTTService, SmallestSTTSettings
+except (ImportError, ModuleNotFoundError):
+    class SmallestSTTService: pass
+    class SmallestSTTSettings: pass
+
+try:
+    from pipecat.services.smallest.tts import SmallestTTSService, SmallestTTSSettings
+except (ImportError, ModuleNotFoundError):
+    class SmallestTTSService: pass
+    class SmallestTTSSettings: pass
+
+try:
+    from pipecat.services.speaches.llm import SpeachesLLMService, SpeachesLLMSettings
+except (ImportError, ModuleNotFoundError):
+    class SpeachesLLMService: pass
+    class SpeachesLLMSettings: pass
+
+try:
+    from pipecat.services.speaches.stt import SpeachesSTTService, SpeachesSTTSettings
+except (ImportError, ModuleNotFoundError):
+    class SpeachesSTTService: pass
+    class SpeachesSTTSettings: pass
+
+try:
+    from pipecat.services.speaches.tts import SpeachesTTSService, SpeachesTTSSettings
+except (ImportError, ModuleNotFoundError):
+    class SpeachesTTSService: pass
+    class SpeachesTTSSettings: pass
+
+try:
+    from pipecat.services.speechmatics.stt import SpeechmaticsSTTService, SpeechmaticsSTTSettings
+except (ImportError, ModuleNotFoundError):
+    class SpeechmaticsSTTService: pass
+    class SpeechmaticsSTTSettings: pass
 from pipecat.transcriptions.language import Language
 from pipecat.utils.text.xml_function_tag_filter import XMLFunctionTagFilter
 
