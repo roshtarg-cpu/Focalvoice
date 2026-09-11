@@ -7,7 +7,7 @@ Each row represents one provider account that an organization has connected
 
 from typing import Any, Dict, List, Optional
 
-from sqlalchemy import func, update
+from sqlalchemy import String, cast, func, update
 from sqlalchemy.exc import IntegrityError
 from sqlalchemy.future import select
 
@@ -90,12 +90,12 @@ class TelephonyConfigurationClient(BaseDBClient):
                     TelephonyConfigurationModel.provider == "telnyx",
                     (
                         TelephonyConfigurationModel.credentials.op("->>")(
-                            "webhook_public_key"
+                            cast("webhook_public_key", String)
                         ).is_(None)
                     )
                     | (
                         TelephonyConfigurationModel.credentials.op("->>")(
-                            "webhook_public_key"
+                            cast("webhook_public_key", String)
                         )
                         == ""
                     ),
