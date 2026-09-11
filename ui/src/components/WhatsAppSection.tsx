@@ -229,7 +229,7 @@ export function WhatsAppSection() {
           <Label htmlFor="wa-sender">Sender / brand name</Label>
           <Input
             id="wa-sender"
-            placeholder="auto4you"
+            placeholder="focalvoice"
             value={cfg.sender_name}
             onChange={(e) => setField("sender_name", e.target.value)}
           />

@@ -470,7 +470,7 @@ export function KycWizard({
                             id="kyc-business-name"
                             value={businessName}
                             onChange={(e) => setBusinessName(e.target.value)}
-                            placeholder="Auto4You Pvt Ltd"
+                            placeholder="Focal Voice Pvt Ltd"
                           />
                         </div>
                       )}

@@ -353,19 +353,21 @@ export function CreditsSection() {
             <p className="mt-1 text-xs text-muted-foreground">
               Talk to us:{" "}
               <a
-                href="mailto:hardikagarwal@autosysai.dev?subject=Enterprise%20plan%20—%20Focal%20Voice"
+                href="mailto:roshtarg@gmail.com?subject=Enterprise%20plan%20—%20Focal%20Voice"
                 className="underline underline-offset-4 hover:text-foreground"
               >
-                hardikagarwal@autosysai.dev
+                roshtarg@gmail.com
               </a>
             </p>
           </div>
           <div className="flex shrink-0 flex-col gap-2 sm:items-end">
-            <Button variant="brand" className="w-full sm:w-auto" asChild>
-              <a href={BOOK_A_MEETING_URL} target="_blank" rel="noopener noreferrer">
-                Book a meeting
-              </a>
-            </Button>
+            {BOOK_A_MEETING_URL && (
+              <Button variant="brand" className="w-full sm:w-auto" asChild>
+                <a href={BOOK_A_MEETING_URL} target="_blank" rel="noopener noreferrer">
+                  Book a meeting
+                </a>
+              </Button>
+            )}
             <button
               type="button"
               className="text-xs text-muted-foreground underline underline-offset-4 hover:text-foreground"

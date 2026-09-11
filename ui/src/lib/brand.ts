@@ -47,5 +47,4 @@ export const CLIENT_MODE = process.env.NEXT_PUBLIC_CLIENT_MODE === "true";
 
 /** Calendly (or similar) link used by the Enterprise "Book a meeting" CTAs. */
 export const BOOK_A_MEETING_URL =
-    process.env.NEXT_PUBLIC_BOOK_A_MEETING_URL ||
-    "https://calendly.com/hardik-shahpura/intro-call";
+    process.env.NEXT_PUBLIC_BOOK_A_MEETING_URL || "";

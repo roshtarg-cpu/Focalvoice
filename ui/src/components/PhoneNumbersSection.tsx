@@ -56,7 +56,7 @@ interface NumbersPayload {
 
 // TODO(support): wire a real "request manual review" backend endpoint. For now
 // this opens the operator's inbox so the customer can flag a rejected KYC.
-const MANUAL_REVIEW_EMAIL = "hardikagarwal@autosysai.dev";
+const MANUAL_REVIEW_EMAIL = "roshtarg@gmail.com";
 
 type KycBanner =
   | "unconfigured"
