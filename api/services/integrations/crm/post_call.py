@@ -16,6 +16,7 @@ from api.enums import OrganizationConfigurationKey
 from api.schemas.crm_config import CRMConfig
 from api.services.integrations.crm.base import CallLog, CRMProvider
 from api.services.integrations.crm.providers.gohighlevel import GoHighLevelProvider
+from api.services.integrations.crm.providers.google_sheets import GoogleSheetsProvider
 from api.utils.common import get_backend_endpoints
 from api.utils.secret_crypto import decrypt_secret
 
@@ -23,6 +24,12 @@ from api.utils.secret_crypto import decrypt_secret
 def _resolve_provider(cfg: CRMConfig) -> Optional[CRMProvider]:
     if cfg.provider == "gohighlevel":
         return GoHighLevelProvider(api_key=cfg.api_key, location_id=cfg.location_id)
+    if cfg.provider == "google_sheets":
+        return GoogleSheetsProvider(
+            service_account_json=cfg.api_key,
+            spreadsheet_id=cfg.spreadsheet_id,
+            sheet_name=cfg.sheet_name or "Calls",
+        )
     # leadsquared / kylas / hubspot adapters slot in here later.
     logger.warning(f"CRM: unknown provider '{cfg.provider}'")
     return None

@@ -14,11 +14,14 @@ from pydantic import BaseModel, Field
 
 class CRMConfig(BaseModel):
     enabled: bool = False
-    provider: str = "gohighlevel"  # gohighlevel | leadsquared | kylas | hubspot (future)
+    provider: str = "gohighlevel"  # gohighlevel | google_sheets | leadsquared | kylas | hubspot
     api_key: str = ""  # sensitive — masked on read, encrypted at rest
     # GoHighLevel sub-account (Location) id; data-center/host for region-bound CRMs.
     location_id: str = ""
     region_host: str = ""  # e.g. LeadSquared api-inXX host (provider-specific)
+    # Google Sheets: target spreadsheet and sheet tab name.
+    spreadsheet_id: str = ""
+    sheet_name: str = "Calls"
     # Empty = log for any disposition; else only these mapped dispositions.
     trigger_dispositions: List[str] = Field(default_factory=list)
     # Empty = sync regardless of sentiment; else only when overall_sentiment matches

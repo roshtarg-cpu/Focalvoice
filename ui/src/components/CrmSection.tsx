@@ -22,6 +22,8 @@ interface CRMConfig {
   api_key: string;
   location_id: string;
   region_host: string;
+  spreadsheet_id: string;
+  sheet_name: string;
   trigger_dispositions: string[];
   trigger_sentiments: string[];
   min_call_seconds: number;
@@ -33,10 +35,17 @@ const EMPTY: CRMConfig = {
   api_key: "",
   location_id: "",
   region_host: "",
+  spreadsheet_id: "",
+  sheet_name: "Calls",
   trigger_dispositions: [],
   trigger_sentiments: [],
   min_call_seconds: 0,
 };
+
+const PROVIDERS = [
+  { value: "gohighlevel", label: "GoHighLevel" },
+  { value: "google_sheets", label: "Google Sheets" },
+] as const;
 
 const BASE = "/api/v1/organizations/crm-config";
 
@@ -160,41 +169,97 @@ export function CrmSection() {
         />
       </div>
 
-      <div className="grid grid-cols-2 gap-4">
-        <div className="space-y-2">
-          <Label htmlFor="crm-provider">CRM</Label>
-          <div
-            id="crm-provider"
-            className="border-input flex h-10 w-full items-center rounded-lg border bg-muted/40 px-3.5 text-sm text-muted-foreground shadow-[var(--shadow-card)]"
-          >
-            GoHighLevel
-          </div>
-        </div>
-        <div className="space-y-2">
-          <Label htmlFor="crm-location">Location ID</Label>
-          <Input
-            id="crm-location"
-            placeholder="GHL sub-account location id"
-            value={cfg.location_id}
-            onChange={(e) => set("location_id", e.target.value)}
-          />
-        </div>
+      <div className="space-y-2">
+        <Label htmlFor="crm-provider">CRM provider</Label>
+        <select
+          id="crm-provider"
+          className="border-input flex h-10 w-full items-center rounded-lg border bg-background px-3.5 text-sm shadow-[var(--shadow-card)] focus:outline-none focus:ring-2 focus:ring-ring"
+          value={cfg.provider}
+          onChange={(e) => set("provider", e.target.value)}
+        >
+          {PROVIDERS.map((p) => (
+            <option key={p.value} value={p.value}>{p.label}</option>
+          ))}
+        </select>
       </div>
 
-      <div className="space-y-2">
-        <Label htmlFor="crm-key">API token</Label>
-        <Input
-          id="crm-key"
-          type="password"
-          placeholder="GoHighLevel Private Integration Token"
-          value={cfg.api_key}
-          onChange={(e) => set("api_key", e.target.value)}
-        />
-        <p className="text-xs text-muted-foreground">
-          Stored encrypted and shown masked. Leave the masked value to keep the
-          current token.
-        </p>
-      </div>
+      {cfg.provider === "gohighlevel" && (
+        <div className="space-y-4">
+          <div className="space-y-2">
+            <Label htmlFor="crm-location">Location ID</Label>
+            <Input
+              id="crm-location"
+              placeholder="GHL sub-account location id"
+              value={cfg.location_id}
+              onChange={(e) => set("location_id", e.target.value)}
+            />
+          </div>
+          <div className="space-y-2">
+            <Label htmlFor="crm-key">API token</Label>
+            <Input
+              id="crm-key"
+              type="password"
+              placeholder="GoHighLevel Private Integration Token"
+              value={cfg.api_key}
+              onChange={(e) => set("api_key", e.target.value)}
+            />
+            <p className="text-xs text-muted-foreground">
+              Stored encrypted and shown masked. Leave the masked value to keep the current token.
+            </p>
+          </div>
+        </div>
+      )}
+
+      {cfg.provider === "google_sheets" && (
+        <div className="space-y-4">
+          <div className="grid grid-cols-2 gap-4">
+            <div className="space-y-2">
+              <Label htmlFor="crm-spreadsheet-id">Spreadsheet ID</Label>
+              <Input
+                id="crm-spreadsheet-id"
+                placeholder="1BxiMVs0XRA5nFMdKvBdBZjgmUUqptlbs74OgVE2upms"
+                value={cfg.spreadsheet_id}
+                onChange={(e) => set("spreadsheet_id", e.target.value)}
+              />
+              <p className="text-xs text-muted-foreground">
+                From the sheet URL: /spreadsheets/d/<strong>ID</strong>/edit
+              </p>
+            </div>
+            <div className="space-y-2">
+              <Label htmlFor="crm-sheet-name">Sheet tab name</Label>
+              <Input
+                id="crm-sheet-name"
+                placeholder="Calls"
+                value={cfg.sheet_name}
+                onChange={(e) => set("sheet_name", e.target.value)}
+              />
+            </div>
+          </div>
+          <div className="space-y-2">
+            <Label htmlFor="crm-key-gs">Service account JSON</Label>
+            <textarea
+              id="crm-key-gs"
+              rows={5}
+              className="border-input w-full rounded-lg border bg-background px-3.5 py-2 text-xs font-mono shadow-[var(--shadow-card)] focus:outline-none focus:ring-2 focus:ring-ring"
+              placeholder={'{\n  "type": "service_account",\n  "client_email": "…",\n  "private_key": "-----BEGIN RSA PRIVATE KEY-----\\n…"\n}'}
+              value={cfg.api_key}
+              onChange={(e) => set("api_key", e.target.value)}
+            />
+            <p className="text-xs text-muted-foreground">
+              Paste the full JSON key downloaded from GCP. Stored encrypted.{" "}
+              <a
+                href="https://console.cloud.google.com/iam-admin/serviceaccounts"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="underline underline-offset-2"
+              >
+                Get a key
+              </a>{" "}
+              → Enable Sheets API → share the spreadsheet with the service account email.
+            </p>
+          </div>
+        </div>
+      )}
 
       <div className="grid grid-cols-2 gap-4">
         <div className="space-y-2">
