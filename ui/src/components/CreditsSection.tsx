@@ -353,7 +353,7 @@ export function CreditsSection() {
             <p className="mt-1 text-xs text-muted-foreground">
               Talk to us:{" "}
               <a
-                href="mailto:hardikagarwal@autosysai.dev?subject=Enterprise%20plan%20—%20Auto4You"
+                href="mailto:hardikagarwal@autosysai.dev?subject=Enterprise%20plan%20—%20Focal%20Voice"
                 className="underline underline-offset-4 hover:text-foreground"
               >
                 hardikagarwal@autosysai.dev

@@ -68,7 +68,7 @@ export default function LoginPage() {
         <div className="relative flex items-center gap-3">
           {/* eslint-disable-next-line @next/next/no-img-element */}
           <img src="/brand-logo.svg" alt="" width={36} height={36} />
-          <span className="text-[17px] font-semibold tracking-[-0.01em]">Auto4You Voice</span>
+          <span className="text-[17px] font-semibold tracking-[-0.01em]">Focal Voice</span>
         </div>
         <div className="relative max-w-md">
           <h2 className="text-display">AI voice agents that actually close.</h2>
@@ -86,7 +86,7 @@ export default function LoginPage() {
           </p>
           <AuthEnterpriseCTA />
         </div>
-        <p className="text-small relative text-white/40">© auto4you</p>
+        <p className="text-small relative text-white/40">© Focal Voice</p>
       </div>
 
       {/* Form */}
@@ -96,7 +96,7 @@ export default function LoginPage() {
             {/* eslint-disable-next-line @next/next/no-img-element */}
             <img src="/brand-logo.svg" alt="" width={32} height={32} />
             <span className="text-[17px] font-semibold tracking-[-0.01em]">
-              Auto4You Voice
+              Focal Voice
             </span>
           </div>
           <p className="text-eyebrow text-primary">Welcome back</p>

@@ -13,10 +13,10 @@ jobs:
   build-ui:
     runs-on: ubuntu-latest
     steps:
-      - name: Checkout toprmrproducer/voice-engine
+      - name: Checkout roshtarg-cpu/Focalvoice
         uses: actions/checkout@v4
         with:
-          repository: toprmrproducer/voice-engine
+          repository: roshtarg-cpu/Focalvoice
           ref: main
 
       - name: Set up Docker Buildx
@@ -39,5 +39,7 @@ jobs:
           tags: ghcr.io/roshtarg-cpu/toprmrproducer-ui:latest
           build-args: |
             NEXT_PUBLIC_BACKEND_URL=https://34-131-30-241.sslip.io
+            NEXT_PUBLIC_BRAND_NAME=Focal Voice
+            NEXT_PUBLIC_BRAND_TAGLINE=AI voice agents that actually close
           cache-from: type=gha,scope=toprmrproducer-ui
           cache-to: type=gha,mode=max,scope=toprmrproducer-ui
