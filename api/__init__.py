@@ -3,45 +3,26 @@ Inject stubs for dograh-private pipecat modules before any api.* import
 triggers pipecat imports. These modules exist only in dograh's private pipecat
 fork; public pipecat-ai/pipecat does not ship them.
 """
+import importlib
 import sys
 import types
 from contextvars import ContextVar
 from enum import Enum
 
-# Load the real pipecat package AND its sub-packages that exist in public
-# pipecat BEFORE creating any stubs. This prevents our stub-module creator
-# from shadowing real packages with fake types.ModuleType objects.
+# Pre-import the top-level pipecat package.
 import pipecat  # noqa: F401
-
-_REAL_PIPECAT_PACKAGES = [
-    "pipecat.bus",
-    "pipecat.bus.serializers",
-    "pipecat.utils",
-    "pipecat.utils.context",
-    "pipecat.utils.tracing",
-    "pipecat.audio",
-    "pipecat.audio.turn",
-    "pipecat.audio.turn.smart_turn",
-    "pipecat.serializers",
-    "pipecat.services",
-    "pipecat.services.deepgram",
-    "pipecat.services.dograh",
-    "pipecat.extensions",
-    "pipecat.turns",
-    "pipecat.workers",
-    "pipecat.pipeline",
-]
-for _pkg in _REAL_PIPECAT_PACKAGES:
-    try:
-        __import__(_pkg)
-    except (ImportError, ModuleNotFoundError):
-        pass  # truly absent — stubs will create these below
 
 
 def _ensure_module(dotted_name: str) -> types.ModuleType:
-    """Return existing module or create an empty one registered in sys.modules."""
+    """Return existing module, import it if it exists, or create a blank stub."""
     if dotted_name in sys.modules:
         return sys.modules[dotted_name]
+    # Try the real import first — use the real module whenever it exists.
+    try:
+        return importlib.import_module(dotted_name)
+    except (ImportError, ModuleNotFoundError):
+        pass
+    # Genuinely absent: create a blank stub and register parent chain.
     parts = dotted_name.split(".")
     for i in range(1, len(parts) + 1):
         name = ".".join(parts[:i])
@@ -150,11 +131,14 @@ for _m in _turn_stubs:
 if not hasattr(sys.modules.get("pipecat.turns.user_mute", types.ModuleType("")), "CallbackUserMuteStrategy"):
     class CallbackUserMuteStrategy:
         """Stub."""
+    class BaseUserMuteStrategy:
+        """Stub."""
     class FunctionCallUserMuteStrategy:
         """Stub."""
     class MuteUntilFirstBotCompleteUserMuteStrategy:
         """Stub."""
     _stub("pipecat.turns.user_mute",
+          BaseUserMuteStrategy=BaseUserMuteStrategy,
           CallbackUserMuteStrategy=CallbackUserMuteStrategy,
           FunctionCallUserMuteStrategy=FunctionCallUserMuteStrategy,
           MuteUntilFirstBotCompleteUserMuteStrategy=MuteUntilFirstBotCompleteUserMuteStrategy)
@@ -276,6 +260,9 @@ for _m in ["pipecat.utils.tracing", "pipecat.utils.tracing.setup",
 if not hasattr(sys.modules["pipecat.utils.tracing.setup"], "setup_tracing"):
     def setup_tracing(*a, **kw): pass
     _stub("pipecat.utils.tracing.setup", setup_tracing=setup_tracing)
+if not hasattr(sys.modules["pipecat.utils.tracing.setup"], "is_tracing_available"):
+    def is_tracing_available() -> bool: return False
+    _stub("pipecat.utils.tracing.setup", is_tracing_available=is_tracing_available)
 
 if not hasattr(sys.modules["pipecat.utils.tracing.service_attributes"], "__getattr__"):
     def _noop_fn(*a, **kw): pass
