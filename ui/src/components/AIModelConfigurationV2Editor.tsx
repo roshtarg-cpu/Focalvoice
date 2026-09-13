@@ -337,29 +337,34 @@ export function AIModelConfigurationV2Editor({
     const saveByokConfiguration = async (config: Record<string, unknown>) => {
         setError(null);
         const isRealtime = Boolean(config.is_realtime);
-        const llm = requireByokService(config, "llm", defaultsForByok);
         const embeddings = optionalByokService(config, "embeddings");
         const body: OrganizationAiModelConfigurationV2 = {
             version: 2,
             mode: "byok",
             byok: isRealtime
-                ? {
-                    mode: "realtime",
-                    realtime: {
-                        realtime: requireByokService(config, "realtime", defaultsForByok) as never,
-                        llm: llm as never,
-                        ...(embeddings ? { embeddings: embeddings as never } : {}),
-                    },
-                }
-                : {
-                    mode: "pipeline",
-                    pipeline: {
-                        llm: llm as never,
-                        tts: requireByokService(config, "tts", defaultsForByok) as never,
-                        stt: requireByokService(config, "stt", defaultsForByok) as never,
-                        ...(embeddings ? { embeddings: embeddings as never } : {}),
-                    },
-                },
+                ? (() => {
+                    const llm = optionalByokService(config, "llm");
+                    return {
+                        mode: "realtime",
+                        realtime: {
+                            realtime: requireByokService(config, "realtime", defaultsForByok) as never,
+                            ...(llm ? { llm: llm as never } : {}),
+                            ...(embeddings ? { embeddings: embeddings as never } : {}),
+                        },
+                    };
+                })()
+                : (() => {
+                    const llm = requireByokService(config, "llm", defaultsForByok);
+                    return {
+                        mode: "pipeline",
+                        pipeline: {
+                            llm: llm as never,
+                            tts: requireByokService(config, "tts", defaultsForByok) as never,
+                            stt: requireByokService(config, "stt", defaultsForByok) as never,
+                            ...(embeddings ? { embeddings: embeddings as never } : {}),
+                        },
+                    };
+                })(),
         };
 
         await onSave(body);
