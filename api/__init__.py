@@ -84,18 +84,18 @@ if "pipecat.utils.enums" not in sys.modules:
         VOICEMAIL_DETECTED = "voicemail_detected"
 
     class RealtimeFeedbackType(str, Enum):
-        BOT_STARTED_SPEAKING = "bot_started_speaking"
-        BOT_STOPPED_SPEAKING = "bot_stopped_speaking"
-        BOT_TEXT = "bot_text"
-        FUNCTION_CALL_END = "function_call_end"
-        FUNCTION_CALL_START = "function_call_start"
-        LATENCY_MEASURED = "latency_measured"
-        NODE_TRANSITION = "node_transition"
-        PIPELINE_ERROR = "pipeline_error"
-        TTFB_METRIC = "ttfb_metric"
-        USER_MUTE_STARTED = "user_mute_started"
-        USER_MUTE_STOPPED = "user_mute_stopped"
-        USER_TRANSCRIPTION = "user_transcription"
+        BOT_STARTED_SPEAKING = "rtf-bot-started-speaking"
+        BOT_STOPPED_SPEAKING = "rtf-bot-stopped-speaking"
+        BOT_TEXT = "rtf-bot-text"
+        FUNCTION_CALL_END = "rtf-function-call-end"
+        FUNCTION_CALL_START = "rtf-function-call-start"
+        LATENCY_MEASURED = "rtf-latency-measured"
+        NODE_TRANSITION = "rtf-node-transition"
+        PIPELINE_ERROR = "rtf-pipeline-error"
+        TTFB_METRIC = "rtf-ttfb-metric"
+        USER_MUTE_STARTED = "rtf-user-mute-started"
+        USER_MUTE_STOPPED = "rtf-user-mute-stopped"
+        USER_TRANSCRIPTION = "rtf-user-transcription"
 
     _stub("pipecat.utils.enums", EndTaskReason=EndTaskReason, RealtimeFeedbackType=RealtimeFeedbackType)
 
