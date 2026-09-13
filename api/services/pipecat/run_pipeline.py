@@ -800,10 +800,16 @@ async def _run_pipeline(
             voicemail_config.get("system_prompt") or DEFAULT_VOICEMAIL_SYSTEM_PROMPT
         )
 
-        voicemail_detector = VoicemailDetector(
-            llm=voicemail_llm,
-            custom_system_prompt=custom_system_prompt,
-        )
+        if voicemail_llm is None:
+            logger.warning(
+                f"Voicemail detection requested for workflow run {workflow_run_id} "
+                "but no text LLM is configured — skipping voicemail detector"
+            )
+        else:
+            voicemail_detector = VoicemailDetector(
+                llm=voicemail_llm,
+                custom_system_prompt=custom_system_prompt,
+            )
 
         # Register event handler to end task when voicemail is detected
         @voicemail_detector.event_handler("on_voicemail_detected")
