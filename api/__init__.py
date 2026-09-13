@@ -202,11 +202,24 @@ if "pipecat.workers.runner" not in sys.modules:
 
 # ── pipecat.extensions.voicemail.voicemail_detector ─────────────────────────
 if "pipecat.extensions.voicemail.voicemail_detector" not in sys.modules:
+    from pipecat.processors.frame_processor import FrameProcessor as _FP
+
+    class _PassthroughProcessor(_FP):
+        """No-op processor used by VoicemailDetector stub."""
+        async def process_frame(self, frame, direction):
+            await self.push_frame(frame, direction)
+
     class VoicemailDetector:
         def __init__(self, **kwargs): pass
         def event_handler(self, event_name):
             def decorator(fn): return fn
             return decorator
+        def detector(self):
+            return _PassthroughProcessor()
+        def llm_gate(self):
+            return _PassthroughProcessor()
+        def gate(self):
+            return _PassthroughProcessor()
     _ensure_module("pipecat.extensions")
     _ensure_module("pipecat.extensions.voicemail")
     _stub("pipecat.extensions.voicemail.voicemail_detector", VoicemailDetector=VoicemailDetector)
