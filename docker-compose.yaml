@@ -227,6 +227,10 @@ services:
       # TURN server configuration (for WebRTC NAT traversal in remote server)
       # Uses time-limited credentials via TURN REST API (HMAC-SHA1)
       TURN_HOST: "${TURN_HOST:-}"
+      # Internal hostname the API container uses to reach coturn. Set to the
+      # Docker service name (e.g. "coturn") when the public IP/hostname is
+      # unreachable from inside the container due to hairpin NAT.
+      TURN_INTERNAL_HOST: "${TURN_INTERNAL_HOST:-}"
       TURN_SECRET: "${TURN_SECRET:-}"
       FORCE_TURN_RELAY: "${FORCE_TURN_RELAY:-false}"
 
