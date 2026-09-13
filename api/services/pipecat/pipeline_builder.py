@@ -215,7 +215,7 @@ def create_pipeline_task(
 
     if enable_turn_logging:
         # Attach event handlers to propagate turn information into the logging context
-        turn_observer = task.turn_tracking_observer
+        turn_observer = getattr(task, 'turn_tracking_observer', None)
 
         if turn_observer is not None:
             # Import turn context manager only if needed

@@ -878,7 +878,7 @@ async def _run_pipeline(
     task.add_observer(feedback_observer)
 
     # Register latency observer to log user-to-bot response latency
-    if task.user_bot_latency_observer:
+    if getattr(task, 'user_bot_latency_observer', None):
 
         @task.user_bot_latency_observer.event_handler("on_latency_measured")
         async def on_latency_measured(observer, latency_seconds):
