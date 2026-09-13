@@ -121,7 +121,7 @@ class BYOKPipelineAIModelConfiguration(BaseModel):
 
 class BYOKRealtimeAIModelConfiguration(BaseModel):
     realtime: RealtimeConfig
-    llm: LLMConfig
+    llm: LLMConfig | None = None
     embeddings: EmbeddingsConfig | None = None
 
     @model_validator(mode="after")
@@ -196,7 +196,7 @@ def compile_ai_model_configuration_v2(
         raise ValueError("byok.realtime is required")
     realtime = configuration.byok.realtime
     return EffectiveAIModelConfiguration(
-        llm=realtime.llm,
+        llm=realtime.llm,  # may be None — only needed for variable extraction/QA nodes
         realtime=realtime.realtime,
         embeddings=realtime.embeddings,
         is_realtime=True,
