@@ -260,9 +260,14 @@ function requireByokService(
     return serviceConfiguration;
 }
 
-function optionalByokService(config: Record<string, unknown>, service: ServiceSegment): Record<string, unknown> | undefined {
+function optionalByokService(
+    config: Record<string, unknown>,
+    service: ServiceSegment,
+    defaults?: ServiceConfigurationDefaults,
+): Record<string, unknown> | undefined {
     const serviceConfiguration = asRecord(config[service]);
     if (!serviceConfiguration?.provider || serviceConfiguration.provider === "dograh") return undefined;
+    if (defaults && !hasRequiredApiKey(service, serviceConfiguration, defaults)) return undefined;
     return serviceConfiguration;
 }
 
@@ -337,13 +342,13 @@ export function AIModelConfigurationV2Editor({
     const saveByokConfiguration = async (config: Record<string, unknown>) => {
         setError(null);
         const isRealtime = Boolean(config.is_realtime);
-        const embeddings = optionalByokService(config, "embeddings");
+        const embeddings = optionalByokService(config, "embeddings", defaultsForByok);
         const body: OrganizationAiModelConfigurationV2 = {
             version: 2,
             mode: "byok",
             byok: isRealtime
                 ? (() => {
-                    const llm = optionalByokService(config, "llm");
+                    const llm = optionalByokService(config, "llm", defaultsForByok);
                     return {
                         mode: "realtime",
                         realtime: {
