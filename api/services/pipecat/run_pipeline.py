@@ -440,10 +440,14 @@ async def _run_pipeline(
         tts = None
         # Realtime services don't implement run_inference, so create a
         # separate text LLM for variable extraction and other out-of-band
-        # inference calls.
-        inference_llm = create_llm_service(
-            user_config,
-            correlation_id=mps_correlation_id,
+        # inference calls. Optional — only if the user configured a text LLM.
+        inference_llm = (
+            create_llm_service(
+                user_config,
+                correlation_id=mps_correlation_id,
+            )
+            if user_config.llm is not None
+            else None
         )
     else:
         stt = create_stt_service(
