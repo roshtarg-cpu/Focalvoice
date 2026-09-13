@@ -204,6 +204,9 @@ if "pipecat.workers.runner" not in sys.modules:
 if "pipecat.extensions.voicemail.voicemail_detector" not in sys.modules:
     class VoicemailDetector:
         def __init__(self, **kwargs): pass
+        def event_handler(self, event_name):
+            def decorator(fn): return fn
+            return decorator
     _ensure_module("pipecat.extensions")
     _ensure_module("pipecat.extensions.voicemail")
     _stub("pipecat.extensions.voicemail.voicemail_detector", VoicemailDetector=VoicemailDetector)
