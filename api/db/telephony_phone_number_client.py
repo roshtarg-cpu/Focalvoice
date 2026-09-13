@@ -7,7 +7,7 @@ selection and inbound call routing.
 
 from typing import Any, Dict, List, Optional, Tuple
 
-from sqlalchemy import update
+from sqlalchemy import String, cast, update
 from sqlalchemy.exc import IntegrityError
 from sqlalchemy.future import select
 
@@ -161,8 +161,9 @@ class TelephonyPhoneNumberClient(BaseDBClient):
                 )
                 .where(
                     TelephonyConfigurationModel.provider == provider,
-                    TelephonyConfigurationModel.credentials.op("->>")(account_id_field)
-                    == account_id,
+                    TelephonyConfigurationModel.credentials.op("->>")(
+                        cast(account_id_field, String)
+                    ) == account_id,
                     TelephonyPhoneNumberModel.address_normalized
                     == normalized.canonical,
                     TelephonyPhoneNumberModel.is_active.is_(True),
@@ -211,8 +212,9 @@ class TelephonyPhoneNumberClient(BaseDBClient):
                 )
                 .where(
                     TelephonyConfigurationModel.provider == provider,
-                    TelephonyConfigurationModel.credentials.op("->>")(account_id_field)
-                    == account_id,
+                    TelephonyConfigurationModel.credentials.op("->>")(
+                        cast(account_id_field, String)
+                    ) == account_id,
                     TelephonyPhoneNumberModel.address_normalized
                     == normalized.canonical,
                 )
