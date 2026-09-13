@@ -29,7 +29,7 @@ from pipecat.transports.smallwebrtc.connection import SmallWebRTCConnection
 from pipecat.utils.run_context import set_current_org_id, set_current_run_id
 from starlette.websockets import WebSocketState
 
-from api.constants import ENVIRONMENT, FORCE_TURN_RELAY
+from api.constants import ENVIRONMENT, FORCE_TURN_RELAY, TURN_INTERNAL_HOST
 from api.db import db_client
 from api.db.models import UserModel
 from api.enums import Environment
@@ -184,12 +184,15 @@ def filter_outbound_sdp(sdp: str) -> str:
     return "\r\n".join(filtered)
 
 
-def get_ice_servers(user_id: Optional[str] = None) -> List[RTCIceServer]:
+def get_ice_servers(user_id: Optional[str] = None, internal: bool = False) -> List[RTCIceServer]:
     """Build ICE servers configuration including TURN if configured.
 
     Args:
         user_id: Optional user ID for generating time-limited TURN credentials.
                  If provided and TURN_SECRET is configured, uses TURN REST API.
+        internal: When True, uses TURN_INTERNAL_HOST instead of TURN_HOST so
+                  the server-side aiortc can reach coturn via the Docker-internal
+                  network (hairpin NAT blocks the public IP from within Docker).
 
     Returns:
         List of RTCIceServer configurations for WebRTC peer connection.
@@ -200,19 +203,27 @@ def get_ice_servers(user_id: Optional[str] = None) -> List[RTCIceServer]:
     if not TURN_HOST:
         return servers
 
+    turn_host = TURN_INTERNAL_HOST if internal else TURN_HOST
+
     # Use time-limited credentials if TURN_SECRET is configured (recommended)
     if TURN_SECRET and user_id:
         try:
             credentials = generate_turn_credentials(user_id)
+            # Override the URIs to use the correct host for this context
+            uris = [
+                f"turn:{turn_host}:{TURN_PORT}",
+                f"turn:{turn_host}:{TURN_PORT}?transport=tcp",
+            ]
             servers.append(
                 RTCIceServer(
-                    urls=credentials["uris"],
+                    urls=uris,
                     username=credentials["username"],
                     credential=credentials["password"],
                 )
             )
             logger.info(
-                f"TURN server configured with time-limited credentials, TTL: {credentials['ttl']}s"
+                f"TURN server configured with time-limited credentials "
+                f"(host={turn_host}), TTL: {credentials['ttl']}s"
             )
             return servers
         except Exception as e:
@@ -226,8 +237,8 @@ def get_ice_servers(user_id: Optional[str] = None) -> List[RTCIceServer]:
         servers.append(
             RTCIceServer(
                 urls=[
-                    f"turn:{TURN_HOST}:{TURN_PORT}",
-                    f"turn:{TURN_HOST}:{TURN_PORT}?transport=tcp",
+                    f"turn:{turn_host}:{TURN_PORT}",
+                    f"turn:{turn_host}:{TURN_PORT}?transport=tcp",
                 ],
                 username=turn_username,
                 credential=turn_password,
@@ -473,8 +484,10 @@ class SignalingManager:
             )
         else:
             # Create new connection using correct SmallWebRTC API
-            # Generate ICE servers with time-limited TURN credentials for this user
-            user_ice_servers = get_ice_servers(user_id=str(user.id))
+            # Use internal TURN host so aiortc (inside Docker) can reach coturn
+            # via the Docker-internal network instead of the public IP (hairpin NAT
+            # blocks the latter from within containers).
+            user_ice_servers = get_ice_servers(user_id=str(user.id), internal=True)
             pc = SmallWebRTCConnection(
                 ice_servers=user_ice_servers, connection_timeout_secs=60
             )
