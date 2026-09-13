@@ -1124,8 +1124,6 @@ def create_realtime_llm_service(user_config, audio_config: "AudioConfig"):
             # so idle line noise is never streamed as a user turn.
             "vad": GeminiVADParams(disabled=True),
             "max_tokens": 256,
-            "thinking": {"thinking_budget": 0},
-            "enable_affective_dialog": True,
         }
         if language:
             settings_kwargs["language"] = language
