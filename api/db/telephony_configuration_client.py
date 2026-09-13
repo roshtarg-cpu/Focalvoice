@@ -97,7 +97,7 @@ class TelephonyConfigurationClient(BaseDBClient):
                         TelephonyConfigurationModel.credentials.op("->>")(
                             cast("webhook_public_key", String)
                         )
-                        == ""
+                        == cast("", String)
                     ),
                 )
             )

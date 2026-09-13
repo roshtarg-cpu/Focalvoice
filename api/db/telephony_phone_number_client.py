@@ -163,7 +163,7 @@ class TelephonyPhoneNumberClient(BaseDBClient):
                     TelephonyConfigurationModel.provider == provider,
                     TelephonyConfigurationModel.credentials.op("->>")(
                         cast(account_id_field, String)
-                    ) == account_id,
+                    ) == cast(account_id, String),
                     TelephonyPhoneNumberModel.address_normalized
                     == normalized.canonical,
                     TelephonyPhoneNumberModel.is_active.is_(True),
@@ -214,7 +214,7 @@ class TelephonyPhoneNumberClient(BaseDBClient):
                     TelephonyConfigurationModel.provider == provider,
                     TelephonyConfigurationModel.credentials.op("->>")(
                         cast(account_id_field, String)
-                    ) == account_id,
+                    ) == cast(account_id, String),
                     TelephonyPhoneNumberModel.address_normalized
                     == normalized.canonical,
                 )
