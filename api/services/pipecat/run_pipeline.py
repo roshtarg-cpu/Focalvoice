@@ -474,8 +474,8 @@ async def _run_pipeline(
         runtime_configuration = {
             "realtime_provider": user_config.realtime.provider,
             "realtime_model": user_config.realtime.model,
-            "llm_provider": user_config.llm.provider,
-            "llm_model": user_config.llm.model,
+            "llm_provider": user_config.llm.provider if user_config.llm else None,
+            "llm_model": user_config.llm.model if user_config.llm else None,
         }
     else:
         runtime_configuration = {
