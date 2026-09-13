@@ -79,7 +79,7 @@ class UserConfigurationValidator:
         }
         status_list = []
 
-        status_list.extend(self._validate_service(configuration.llm, "llm"))
+        status_list.extend(self._validate_service(configuration.llm, "llm", required=not configuration.is_realtime))
         if configuration.is_realtime:
             status_list.extend(
                 self._validate_service(
