@@ -811,14 +811,14 @@ async def _run_pipeline(
                 custom_system_prompt=custom_system_prompt,
             )
 
-        # Register event handler to end task when voicemail is detected
-        @voicemail_detector.event_handler("on_voicemail_detected")
-        async def _on_voicemail_detected(_processor):
-            logger.info(f"Voicemail detected for workflow run {workflow_run_id}")
-            await engine.end_call_with_reason(
-                reason=EndTaskReason.VOICEMAIL_DETECTED.value,
-                abort_immediately=True,
-            )
+            # Register event handler to end task when voicemail is detected
+            @voicemail_detector.event_handler("on_voicemail_detected")
+            async def _on_voicemail_detected(_processor):
+                logger.info(f"Voicemail detected for workflow run {workflow_run_id}")
+                await engine.end_call_with_reason(
+                    reason=EndTaskReason.VOICEMAIL_DETECTED.value,
+                    abort_immediately=True,
+                )
 
     # Recording router is only meaningful in non-realtime mode (it routes between
     # pre-recorded audio playback and dynamic TTS; realtime LLMs produce audio
