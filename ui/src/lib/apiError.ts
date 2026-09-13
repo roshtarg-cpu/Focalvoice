@@ -12,16 +12,18 @@ function messagesFromItems(items: unknown[]): string[] {
         .map((item) => {
             if (typeof item === "string") return item;
             if (!item || typeof item !== "object") return null;
-            const detail = item as { message?: unknown; msg?: unknown; model?: unknown };
+            const detail = item as { message?: unknown; msg?: unknown; model?: unknown; loc?: unknown };
             const message = typeof detail.message === "string"
                 ? detail.message
                 : typeof detail.msg === "string"
                     ? detail.msg
                     : null;
             if (!message) return null;
-            return typeof detail.model === "string" && detail.model
-                ? `${detail.model}: ${message}`
-                : message;
+            const loc = Array.isArray(detail.loc) ? detail.loc.join(".") : null;
+            const prefix = typeof detail.model === "string" && detail.model
+                ? detail.model
+                : loc;
+            return prefix ? `${prefix}: ${message}` : message;
         })
         .filter((message): message is string => Boolean(message));
 }
