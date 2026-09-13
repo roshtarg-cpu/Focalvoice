@@ -80,6 +80,18 @@ def compose_system_prompt_for_node(
     if has_recordings and "RECORDING_ID:" in formatted_node_prompt:
         parts.append(RECORDING_RESPONSE_MODE_INSTRUCTIONS)
 
+    if node.out_edges:
+        routing_lines = [
+            "ROUTING INSTRUCTIONS — MANDATORY:",
+            "When the conversation reaches a point where one of the conditions below applies, you MUST immediately call the corresponding function. Do NOT continue the conversation without calling it first.",
+            "",
+        ]
+        for edge in node.out_edges:
+            routing_lines.append(
+                f"- Condition: {edge.condition}\n  → Call function: {edge.get_function_name()}"
+            )
+        parts.append("\n".join(routing_lines))
+
     return "\n\n".join(parts)
 
 
