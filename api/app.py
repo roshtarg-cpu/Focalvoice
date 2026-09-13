@@ -27,8 +27,10 @@ if SENTRY_DSN and (
 
 from contextlib import asynccontextmanager
 
-from fastapi import APIRouter, FastAPI
+from fastapi import APIRouter, FastAPI, Request
+from fastapi.exceptions import RequestValidationError
 from fastapi.middleware.cors import CORSMiddleware
+from fastapi.responses import JSONResponse
 from loguru import logger
 
 from api.constants import REDIS_URL
@@ -125,6 +127,12 @@ def _add_public_embed_cors_middleware() -> None:
 
 
 _add_public_embed_cors_middleware()
+
+@app.exception_handler(RequestValidationError)
+async def validation_exception_handler(request: Request, exc: RequestValidationError):
+    logger.error(f"Validation error on {request.method} {request.url.path}: {exc.errors()}")
+    return JSONResponse(status_code=422, content={"detail": exc.errors()})
+
 
 api_router = APIRouter()
 
