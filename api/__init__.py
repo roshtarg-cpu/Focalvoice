@@ -160,9 +160,9 @@ if not hasattr(sys.modules.get("pipecat.turns.user_mute", types.ModuleType("")),
 # pipecat.turns.user_start
 if not hasattr(sys.modules.get("pipecat.turns.user_start", types.ModuleType("")), "ExternalUserTurnStartStrategy"):
     class ExternalUserTurnStartStrategy:
-        """Stub."""
+        def __init__(self, **kwargs): pass
     class TranscriptionUserTurnStartStrategy:
-        """Stub."""
+        def __init__(self, **kwargs): pass
     _stub("pipecat.turns.user_start",
           ExternalUserTurnStartStrategy=ExternalUserTurnStartStrategy,
           TranscriptionUserTurnStartStrategy=TranscriptionUserTurnStartStrategy)
@@ -170,18 +170,18 @@ if not hasattr(sys.modules.get("pipecat.turns.user_start", types.ModuleType(""))
 # pipecat.turns.user_start.vad_user_turn_start_strategy
 if not hasattr(sys.modules.get("pipecat.turns.user_start.vad_user_turn_start_strategy", types.ModuleType("")), "VADUserTurnStartStrategy"):
     class VADUserTurnStartStrategy:
-        """Stub."""
+        def __init__(self, **kwargs): pass
     _stub("pipecat.turns.user_start.vad_user_turn_start_strategy",
           VADUserTurnStartStrategy=VADUserTurnStartStrategy)
 
 # pipecat.turns.user_stop
 if not hasattr(sys.modules.get("pipecat.turns.user_stop", types.ModuleType("")), "ExternalUserTurnStopStrategy"):
     class ExternalUserTurnStopStrategy:
-        """Stub."""
+        def __init__(self, **kwargs): pass
     class SpeechTimeoutUserTurnStopStrategy:
-        """Stub."""
+        def __init__(self, **kwargs): pass
     class TurnAnalyzerUserTurnStopStrategy:
-        """Stub."""
+        def __init__(self, **kwargs): pass
     _stub("pipecat.turns.user_stop",
           ExternalUserTurnStopStrategy=ExternalUserTurnStopStrategy,
           SpeechTimeoutUserTurnStopStrategy=SpeechTimeoutUserTurnStopStrategy,
@@ -190,20 +190,20 @@ if not hasattr(sys.modules.get("pipecat.turns.user_stop", types.ModuleType("")),
 # pipecat.turns.user_turn_strategies
 if not hasattr(sys.modules.get("pipecat.turns.user_turn_strategies", types.ModuleType("")), "UserTurnStrategies"):
     class UserTurnStrategies:
-        """Stub."""
+        def __init__(self, **kwargs): pass
     _stub("pipecat.turns.user_turn_strategies", UserTurnStrategies=UserTurnStrategies)
 
 # ── pipecat.workers.runner ───────────────────────────────────────────────────
 if "pipecat.workers.runner" not in sys.modules:
     class WorkerRunner:
-        """Stub."""
+        def __init__(self, **kwargs): pass
     _ensure_module("pipecat.workers")
     _stub("pipecat.workers.runner", WorkerRunner=WorkerRunner)
 
 # ── pipecat.extensions.voicemail.voicemail_detector ─────────────────────────
 if "pipecat.extensions.voicemail.voicemail_detector" not in sys.modules:
     class VoicemailDetector:
-        """Stub."""
+        def __init__(self, **kwargs): pass
     _ensure_module("pipecat.extensions")
     _ensure_module("pipecat.extensions.voicemail")
     _stub("pipecat.extensions.voicemail.voicemail_detector", VoicemailDetector=VoicemailDetector)
@@ -211,7 +211,7 @@ if "pipecat.extensions.voicemail.voicemail_detector" not in sys.modules:
 # ── pipecat.audio.turn.smart_turn.local_smart_turn_v3 ───────────────────────
 if "pipecat.audio.turn.smart_turn.local_smart_turn_v3" not in sys.modules:
     class LocalSmartTurnAnalyzerV3:
-        """Stub."""
+        def __init__(self, **kwargs): pass
     _ensure_module("pipecat.audio.turn")
     _ensure_module("pipecat.audio.turn.smart_turn")
     _stub("pipecat.audio.turn.smart_turn.local_smart_turn_v3",
@@ -220,7 +220,7 @@ if "pipecat.audio.turn.smart_turn.local_smart_turn_v3" not in sys.modules:
 # ── pipecat.audio.turn.smart_turn.base_smart_turn ───────────────────────────
 if "pipecat.audio.turn.smart_turn.base_smart_turn" not in sys.modules:
     class SmartTurnParams:
-        """Stub."""
+        def __init__(self, **kwargs): pass
     _stub("pipecat.audio.turn.smart_turn.base_smart_turn", SmartTurnParams=SmartTurnParams)
 
 # ── pipecat.services.dograh.* ───────────────────────────────────────────────
@@ -324,6 +324,6 @@ if "pipecat.bus.serializers.json" not in sys.modules:
 # ── pipecat.turns.user_turn_strategies (ExternalUserTurnStrategies) ──────────
 if not hasattr(sys.modules.get("pipecat.turns.user_turn_strategies", types.ModuleType("")), "ExternalUserTurnStrategies"):
     class ExternalUserTurnStrategies:
-        """Stub."""
+        def __init__(self, **kwargs): pass
     _stub("pipecat.turns.user_turn_strategies",
           ExternalUserTurnStrategies=ExternalUserTurnStrategies)
