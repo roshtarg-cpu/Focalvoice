@@ -76,19 +76,7 @@ from pipecat.turns.user_mute import (
     MuteUntilFirstBotCompleteUserMuteStrategy,
 )
 
-try:
-    from pipecat.turns.user_mute import CallbackUserMuteStrategy
-except ImportError:
-    from pipecat.turns.user_mute import BaseUserMuteStrategy
-    from pipecat.frames.frames import Frame
-
-    class CallbackUserMuteStrategy(BaseUserMuteStrategy):
-        def __init__(self, should_mute_callback, **kwargs):
-            super().__init__(**kwargs)
-            self._should_mute_callback = should_mute_callback
-
-        async def process_frame(self, frame: Frame) -> bool:
-            return await self._should_mute_callback(frame)
+from pipecat.turns.user_mute import CallbackUserMuteStrategy
 from pipecat.turns.user_start import (
     ExternalUserTurnStartStrategy,
     TranscriptionUserTurnStartStrategy,

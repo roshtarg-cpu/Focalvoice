@@ -129,13 +129,27 @@ for _m in _turn_stubs:
 
 # pipecat.turns.user_mute
 if not hasattr(sys.modules.get("pipecat.turns.user_mute", types.ModuleType("")), "CallbackUserMuteStrategy"):
-    class CallbackUserMuteStrategy:
-        """Stub."""
     class BaseUserMuteStrategy:
         """Stub."""
-    class FunctionCallUserMuteStrategy:
+        def __init__(self, **kwargs): pass
+        async def setup(self, setup): pass
+        async def cleanup(self): pass
+        async def process_frame(self, frame) -> bool: return False
+
+    class CallbackUserMuteStrategy(BaseUserMuteStrategy):
+        """Stub with callback support."""
+        def __init__(self, should_mute_callback=None, **kwargs):
+            super().__init__(**kwargs)
+            self._should_mute_callback = should_mute_callback
+        async def process_frame(self, frame) -> bool:
+            if self._should_mute_callback:
+                return await self._should_mute_callback(frame)
+            return False
+
+    class FunctionCallUserMuteStrategy(BaseUserMuteStrategy):
         """Stub."""
-    class MuteUntilFirstBotCompleteUserMuteStrategy:
+
+    class MuteUntilFirstBotCompleteUserMuteStrategy(BaseUserMuteStrategy):
         """Stub."""
     _stub("pipecat.turns.user_mute",
           BaseUserMuteStrategy=BaseUserMuteStrategy,
