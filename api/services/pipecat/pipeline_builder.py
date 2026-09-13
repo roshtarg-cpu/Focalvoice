@@ -1,3 +1,4 @@
+import inspect
 import os
 
 from loguru import logger
@@ -194,8 +195,8 @@ def create_pipeline_task(
             f"out: {audio_config.transport_out_sample_rate}Hz"
         )
 
-    task = PipelineWorker(
-        pipeline,
+    _worker_sig = inspect.signature(PipelineWorker.__init__).parameters
+    _worker_kwargs = dict(
         params=pipeline_params,
         enable_tracing=True,
         enable_rtvi=False,
@@ -203,6 +204,10 @@ def create_pipeline_task(
         conversation_parent_context=conversation_parent_context,
         conversation_type=conversation_type,
         additional_span_attributes=additional_span_attributes,
+    )
+    task = PipelineWorker(
+        pipeline,
+        **{k: v for k, v in _worker_kwargs.items() if k in _worker_sig},
     )
 
     # Check if turn logging is enabled
