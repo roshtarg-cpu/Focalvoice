@@ -8,11 +8,23 @@ from api.constants import APP_ROOT_DIR
 from api.services.pipecat.audio_file_cache import get_cached_ambient_noise_path
 try:
     from pipecat.audio.mixers.silence_mixer import SilenceAudioMixer
-except ImportError:
+    # Verify it's concrete (some pipecat versions ship it as abstract)
+    SilenceAudioMixer()
+except Exception:
     from pipecat.audio.mixers.base_audio_mixer import BaseAudioMixer
+    from pipecat.frames.frames import MixerControlFrame
 
     class SilenceAudioMixer(BaseAudioMixer):
         """Fallback mixer that outputs silence (no background audio)."""
+
+        async def start(self, sample_rate: int):
+            pass
+
+        async def stop(self):
+            pass
+
+        async def process_frame(self, frame: MixerControlFrame):
+            pass
 
         async def mix(self, audio: bytes) -> bytes:
             return audio
