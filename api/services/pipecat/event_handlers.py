@@ -327,7 +327,7 @@ def register_event_handlers(
         gathered_context = await engine.get_gathered_context()
 
         # Add trace URL if available (must be done before conversation tracing ends)
-        if task.turn_trace_observer:
+        if getattr(task, 'turn_trace_observer', None):
             trace_id = task.turn_trace_observer.get_trace_id()
             if trace_id:
                 trace_url = get_trace_url(trace_id)
