@@ -1123,7 +1123,7 @@ def create_realtime_llm_service(user_config, audio_config: "AudioConfig"):
             # VAD.  Local Silero VAD drives explicit activity windows instead,
             # so idle line noise is never streamed as a user turn.
             "vad": GeminiVADParams(disabled=True),
-            "max_tokens": 256,
+            "max_tokens": 1024,
         }
         if language:
             settings_kwargs["language"] = language
