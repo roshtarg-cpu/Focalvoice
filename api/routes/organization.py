@@ -1510,9 +1510,9 @@ async def test_crm_config(body: CRMTestRequest, user: UserModel = Depends(get_us
     result = await provider.sync_call(
         CallLog(
             phone=phone,
-            name="auto4you Test Contact",
+            name="Platform Test Contact",
             disposition="TEST",
-            summary="Connection test from auto4you. Safe to delete.",
+            summary="CRM connection test. Safe to delete.",
         )
     )
     return {"ok": result.ok, "detail": result.detail, "contact_id": result.contact_id}

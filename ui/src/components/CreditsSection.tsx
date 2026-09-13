@@ -8,7 +8,7 @@ import { client } from "@/client/client.gen";
 import { Button } from "@/components/ui/button";
 import { useLeadForms } from "@/context/LeadFormsContext";
 import { useAuth } from "@/lib/auth";
-import { BOOK_A_MEETING_URL } from "@/lib/brand";
+import { BOOK_A_MEETING_URL, CONTACT_EMAIL } from "@/lib/brand";
 import { cn } from "@/lib/utils";
 
 interface PackFeatures {
@@ -352,12 +352,14 @@ export function CreditsSection() {
             </p>
             <p className="mt-1 text-xs text-muted-foreground">
               Talk to us:{" "}
-              <a
-                href="mailto:roshtarg@gmail.com?subject=Enterprise%20plan%20—%20Focal%20Voice"
-                className="underline underline-offset-4 hover:text-foreground"
-              >
-                roshtarg@gmail.com
-              </a>
+              {CONTACT_EMAIL ? (
+                <a
+                  href={`mailto:${CONTACT_EMAIL}?subject=Enterprise%20plan%20—%20Focal%20Voice`}
+                  className="underline underline-offset-4 hover:text-foreground"
+                >
+                  {CONTACT_EMAIL}
+                </a>
+              ) : null}
             </p>
           </div>
           <div className="flex shrink-0 flex-col gap-2 sm:items-end">

@@ -23,6 +23,7 @@ import {
     SelectTrigger,
     SelectValue,
 } from "@/components/ui/select";
+import { detailFromError } from "@/lib/apiError";
 import { useAuth } from "@/lib/auth";
 
 interface CreateCredentialDialogProps {
@@ -97,9 +98,7 @@ export function CreateCredentialDialog({
             });
 
             if (response.error) {
-                const errorDetail = (response.error as { detail?: string })?.detail
-                    || "Failed to create credential";
-                setError(errorDetail);
+                setError(detailFromError(response.error, "Failed to create credential"));
                 return;
             }
 

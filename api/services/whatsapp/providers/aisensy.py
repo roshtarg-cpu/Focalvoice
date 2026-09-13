@@ -44,7 +44,7 @@ class AiSensyProvider(WhatsAppProvider):
             "apiKey": self._api_key,
             "campaignName": campaign_name,
             "destination": destination,
-            "userName": sender_name or "auto4you",
+            "userName": sender_name or "Platform",
             "source": "voice-engine",
             "templateParams": [str(p) for p in (template_params or [])],
         }

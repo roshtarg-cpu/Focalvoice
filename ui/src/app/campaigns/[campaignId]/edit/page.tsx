@@ -19,6 +19,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/com
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Separator } from '@/components/ui/separator';
+import { detailFromError } from '@/lib/apiError';
 import { useAuth } from '@/lib/auth';
 
 import CampaignAdvancedSettings, { getTimezoneValue, type TimeSlot } from '../../CampaignAdvancedSettings';
@@ -268,8 +269,7 @@ export default function EditCampaignPage() {
             });
 
             if (response.error) {
-                const errorDetail = (response.error as { detail?: string })?.detail;
-                const errorMessage = errorDetail || 'Failed to update campaign';
+                const errorMessage = detailFromError(response.error, 'Failed to update campaign');
                 setSubmitError(errorMessage);
                 toast.error(errorMessage);
                 return;

@@ -37,6 +37,7 @@ import {
 } from "@/components/ui/dialog";
 import { Skeleton } from "@/components/ui/skeleton";
 import { useAuth } from "@/lib/auth";
+import { CONTACT_EMAIL } from "@/lib/brand";
 import { getKycStatus, type KycStatus } from "@/lib/kyc";
 import { cn } from "@/lib/utils";
 
@@ -56,7 +57,7 @@ interface NumbersPayload {
 
 // TODO(support): wire a real "request manual review" backend endpoint. For now
 // this opens the operator's inbox so the customer can flag a rejected KYC.
-const MANUAL_REVIEW_EMAIL = "roshtarg@gmail.com";
+const MANUAL_REVIEW_EMAIL = CONTACT_EMAIL;
 
 type KycBanner =
   | "unconfigured"
@@ -373,25 +374,27 @@ export function PhoneNumbersSection() {
             >
               Re-upload
             </Button>
-            <Button
-              variant="ghost"
-              className="text-red-700 hover:bg-red-100 dark:text-red-200 dark:hover:bg-red-500/20"
-              onClick={() => {
-                // TODO(support): replace mailto with a real manual-review
-                // endpoint once available on the backend.
-                if (typeof window !== "undefined") {
-                  window.location.href = `mailto:${MANUAL_REVIEW_EMAIL}?subject=${encodeURIComponent(
-                    "KYC manual review request",
-                  )}`;
-                }
-                toast.message("We'll review manually", {
-                  description:
-                    "Send us your details and our team will verify by hand.",
-                });
-              }}
-            >
-              Request manual review
-            </Button>
+            {MANUAL_REVIEW_EMAIL && (
+              <Button
+                variant="ghost"
+                className="text-red-700 hover:bg-red-100 dark:text-red-200 dark:hover:bg-red-500/20"
+                onClick={() => {
+                  // TODO(support): replace mailto with a real manual-review
+                  // endpoint once available on the backend.
+                  if (typeof window !== "undefined") {
+                    window.location.href = `mailto:${MANUAL_REVIEW_EMAIL}?subject=${encodeURIComponent(
+                      "KYC manual review request",
+                    )}`;
+                  }
+                  toast.message("We'll review manually", {
+                    description:
+                      "Send us your details and our team will verify by hand.",
+                  });
+                }}
+              >
+                Request manual review
+              </Button>
+            )}
           </div>
         </div>
       )}

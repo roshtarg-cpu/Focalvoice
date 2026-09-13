@@ -47,4 +47,8 @@ export const CLIENT_MODE = process.env.NEXT_PUBLIC_CLIENT_MODE === "true";
 
 /** Calendly (or similar) link used by the Enterprise "Book a meeting" CTAs. */
 export const BOOK_A_MEETING_URL =
-    process.env.NEXT_PUBLIC_BOOK_A_MEETING_URL || "https://calendly.com/roshtarg/30min";
+    process.env.NEXT_PUBLIC_BOOK_A_MEETING_URL || "";
+
+/** Contact email for enterprise enquiries and support. */
+export const CONTACT_EMAIL =
+    process.env.NEXT_PUBLIC_CONTACT_EMAIL || "";

@@ -210,7 +210,7 @@ def _payu_customer_fields(user: UserModel) -> tuple[str, str, str]:
     email locally, so firstname derives from it and phone falls back to a
     placeholder (PayU requires the field; the user re-enters real details on the
     PayU page if needed)."""
-    email = user.email or "customer@auto4you.in"
+    email = user.email or "customer@example.com"
     firstname = (email.split("@", 1)[0] or "Customer")[:60]
     phone = getattr(user, "phone", None) or "9999999999"
     return firstname, email, phone

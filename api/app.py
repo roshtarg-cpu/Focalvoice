@@ -3,6 +3,7 @@
 import sentry_sdk
 
 from api.constants import (
+    BACKEND_API_ENDPOINT,
     CORS_ALLOWED_ORIGINS,
     DEPLOYMENT_MODE,
     ENABLE_TELEMETRY,
@@ -90,7 +91,7 @@ app = FastAPI(
     openapi_url=f"{API_PREFIX}/openapi.json",
     lifespan=lifespan,
     servers=[
-        {"url": "https://api.auto4you.in", "description": "Production"},
+        {"url": BACKEND_API_ENDPOINT, "description": "Production"},
         {"url": "http://localhost:8000", "description": "Local development"},
     ],
 )

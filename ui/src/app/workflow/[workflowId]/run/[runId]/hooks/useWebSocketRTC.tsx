@@ -598,6 +598,9 @@ export const useWebSocketRTC = ({ workflowId, workflowRunId, accessToken, initia
                             userMutedRef.current = false;
                             break;
 
+                        case 'rtf-latency-measured':
+                            break;
+
                         default:
                             logger.warn('Unknown message type:', message.type);
                     }
