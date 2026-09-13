@@ -126,6 +126,11 @@ class DograhGeminiLiveLLMService(GeminiLiveLLMService):
         )
         await self.run_function_calls(fcs)
 
+    async def _drain_pending_tool_results(self):
+        # pipecat 1.9.1 does not have this base-class method; stub it out so
+        # _handle_session_ready doesn't crash on reconnect/session-ready.
+        pass
+
     # ------------------------------------------------------------------
     # Frame handling: mute, TTSSpeakFrame, BotStoppedSpeakingFrame flush
     # ------------------------------------------------------------------
