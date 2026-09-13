@@ -103,10 +103,11 @@ def _create_realtime_user_turn_config(provider: str):
         ServiceProviders.GOOGLE_REALTIME.value,
         ServiceProviders.GOOGLE_VERTEX_REALTIME.value,
     }:
-        # Gemini's server VAD sees the whole PSTN channel and can turn low-level
-        # background noise into false turns.  Drive Gemini with local Silero
-        # activity windows instead.  These thresholds retain short utterances
-        # such as "hello" while the start/stop hysteresis rejects line noise.
+        # Gemini's server VAD is disabled; local Silero drives turn detection.
+        # Use a higher confidence threshold (0.7) so background noise, breathing,
+        # and software artifacts don't trigger false user turns and cause Gemini
+        # to respond to silence. start_secs=0.1 requires at least 100ms of
+        # sustained speech before a turn starts.
         return (
             UserTurnStrategies(
                 start=[VADUserTurnStartStrategy(enable_interruptions=False)],
@@ -121,10 +122,10 @@ def _create_realtime_user_turn_config(provider: str):
             ),
             SileroVADAnalyzer(
                 params=VADParams(
-                    confidence=0.15,
-                    start_secs=0.032,
-                    stop_secs=0.12,
-                    min_volume=0.2,
+                    confidence=0.7,
+                    start_secs=0.1,
+                    stop_secs=0.3,
+                    min_volume=0.6,
                 )
             ),
         )
