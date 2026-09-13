@@ -631,9 +631,7 @@ async def _run_pipeline(
     engine.set_context(context)
     engine.set_audio_config(audio_config)
 
-    assistant_params = LLMAssistantAggregatorParams(
-        correct_aggregation_callback=engine.create_aggregation_correction_callback(),
-    )
+    assistant_params = LLMAssistantAggregatorParams()
 
     user_mute_strategies = [
         FunctionCallUserMuteStrategy(),
