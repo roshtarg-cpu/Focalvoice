@@ -78,7 +78,9 @@ def build_pipeline(
     # This prevents the main LLM from being triggered until classification
     # determines whether a human or voicemail answered the call.
     if voicemail_detector:
-        processors.append(voicemail_detector.llm_gate())
+        _llm_gate_fn = getattr(voicemail_detector, 'llm_gate', None) or getattr(voicemail_detector, 'gate', None)
+        if _llm_gate_fn:
+            processors.append(_llm_gate_fn())
 
     processors.extend(
         [

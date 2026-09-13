@@ -802,7 +802,6 @@ async def _run_pipeline(
 
         voicemail_detector = VoicemailDetector(
             llm=voicemail_llm,
-            long_speech_timeout=long_speech_timeout,
             custom_system_prompt=custom_system_prompt,
         )
 
