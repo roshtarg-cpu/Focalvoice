@@ -194,14 +194,20 @@ if not hasattr(sys.modules.get("pipecat.turns.user_turn_strategies", types.Modul
     _stub("pipecat.turns.user_turn_strategies", UserTurnStrategies=UserTurnStrategies)
 
 # ── pipecat.workers.runner ───────────────────────────────────────────────────
-if "pipecat.workers.runner" not in sys.modules:
+_ensure_module("pipecat.workers")
+_wr_mod = _ensure_module("pipecat.workers.runner")
+if not hasattr(_wr_mod, "WorkerRunner"):
     class WorkerRunner:
         def __init__(self, **kwargs): pass
-    _ensure_module("pipecat.workers")
+        async def add_workers(self, *workers): pass
+        async def run(self, **kwargs): pass
     _stub("pipecat.workers.runner", WorkerRunner=WorkerRunner)
 
 # ── pipecat.extensions.voicemail.voicemail_detector ─────────────────────────
-if "pipecat.extensions.voicemail.voicemail_detector" not in sys.modules:
+_ensure_module("pipecat.extensions")
+_ensure_module("pipecat.extensions.voicemail")
+_vmd_mod = _ensure_module("pipecat.extensions.voicemail.voicemail_detector")
+if not hasattr(_vmd_mod, "VoicemailDetector"):
     from pipecat.processors.frame_processor import FrameProcessor as _FP
 
     class _PassthroughProcessor(_FP):
@@ -220,21 +226,21 @@ if "pipecat.extensions.voicemail.voicemail_detector" not in sys.modules:
             return _PassthroughProcessor()
         def gate(self):
             return _PassthroughProcessor()
-    _ensure_module("pipecat.extensions")
-    _ensure_module("pipecat.extensions.voicemail")
     _stub("pipecat.extensions.voicemail.voicemail_detector", VoicemailDetector=VoicemailDetector)
 
 # ── pipecat.audio.turn.smart_turn.local_smart_turn_v3 ───────────────────────
-if "pipecat.audio.turn.smart_turn.local_smart_turn_v3" not in sys.modules:
+_ensure_module("pipecat.audio.turn")
+_ensure_module("pipecat.audio.turn.smart_turn")
+_lst_mod = _ensure_module("pipecat.audio.turn.smart_turn.local_smart_turn_v3")
+if not hasattr(_lst_mod, "LocalSmartTurnAnalyzerV3"):
     class LocalSmartTurnAnalyzerV3:
         def __init__(self, **kwargs): pass
-    _ensure_module("pipecat.audio.turn")
-    _ensure_module("pipecat.audio.turn.smart_turn")
     _stub("pipecat.audio.turn.smart_turn.local_smart_turn_v3",
           LocalSmartTurnAnalyzerV3=LocalSmartTurnAnalyzerV3)
 
 # ── pipecat.audio.turn.smart_turn.base_smart_turn ───────────────────────────
-if "pipecat.audio.turn.smart_turn.base_smart_turn" not in sys.modules:
+_bst_mod = _ensure_module("pipecat.audio.turn.smart_turn.base_smart_turn")
+if not hasattr(_bst_mod, "SmartTurnParams"):
     class SmartTurnParams:
         def __init__(self, **kwargs): pass
     _stub("pipecat.audio.turn.smart_turn.base_smart_turn", SmartTurnParams=SmartTurnParams)
@@ -266,7 +272,8 @@ if "pipecat.services.deepgram.flux" not in sys.modules:
           DeepgramFluxSTTSettings=type("DeepgramFluxSTTSettings", (), {}))
 
 # ── pipecat.utils.time ───────────────────────────────────────────────────────
-if "pipecat.utils.time" not in sys.modules:
+_time_mod = _ensure_module("pipecat.utils.time")
+if not hasattr(_time_mod, "time_now_iso8601"):
     from datetime import datetime, timezone as _tz
     def time_now_iso8601() -> str:
         return datetime.now(_tz.utc).isoformat()
@@ -317,23 +324,22 @@ if not hasattr(sys.modules["pipecat.utils.tracing.tracing_context"], "TracingCon
     _stub("pipecat.utils.tracing.tracing_context", TracingContext=TracingContext)
 
 # ── pipecat.utils.context.llm_context_summarization ─────────────────────────
-if "pipecat.utils.context.llm_context_summarization" not in sys.modules:
+_lcs_mod = _ensure_module("pipecat.utils.context.llm_context_summarization")
+if not hasattr(_lcs_mod, "LLMContextSummarizationUtil"):
     class LLMContextSummarizationUtil:
-        """Stub."""
         def __init__(self, *a, **kw): pass
     class LLMContextSummaryConfig:
-        """Stub."""
         def __init__(self, *a, **kw): pass
     _stub("pipecat.utils.context.llm_context_summarization",
           LLMContextSummarizationUtil=LLMContextSummarizationUtil,
           LLMContextSummaryConfig=LLMContextSummaryConfig)
 
 # ── pipecat.bus.serializers.json ─────────────────────────────────────────────
-if "pipecat.bus.serializers.json" not in sys.modules:
-    _ensure_module("pipecat.bus")
-    _ensure_module("pipecat.bus.serializers")
+_ensure_module("pipecat.bus")
+_ensure_module("pipecat.bus.serializers")
+_bsj_mod = _ensure_module("pipecat.bus.serializers.json")
+if not hasattr(_bsj_mod, "JSONMessageSerializer"):
     class JSONMessageSerializer:
-        """Stub."""
         def __init__(self, *a, **kw): pass
     _stub("pipecat.bus.serializers.json", JSONMessageSerializer=JSONMessageSerializer)
 
