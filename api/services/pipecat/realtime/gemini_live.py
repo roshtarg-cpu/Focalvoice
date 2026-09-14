@@ -33,8 +33,8 @@ from pipecat.frames.frames import (
     UserMuteStoppedFrame,
 )
 from pipecat.processors.aggregators.llm_context import LLMContext
-from pipecat.processors.frame_processor import FrameDirection
-from pipecat.services.google.gemini_live.llm import GeminiLiveLLMService
+from pipecat.processors.frame_processor import FrameDirection, FrameProcessorSetup
+from pipecat.services.google.gemini_live.llm import GeminiLiveLLMService, LLMSettings
 from pipecat.services.llm_service import FunctionCallFromLLM
 from pipecat.utils.tracing.service_decorators import traced_gemini_live
 
@@ -65,27 +65,38 @@ class DograhGeminiLiveLLMService(GeminiLiveLLMService):
         self._pending_function_calls: list[FunctionCallFromLLM] = []
 
     # ------------------------------------------------------------------
-    # Hooks from upstream GeminiLiveLLMService
+    # Deferred connect: block setup()'s unconditional _connect() until the
+    # engine sets a system_instruction (so template variables land first).
+    # Override _update_settings() to reconnect when system_instruction changes,
+    # because pipecat 1.9.1 does not call _handle_changed_settings() from
+    # _update_settings() — it only warns about unhandled changes.
     # ------------------------------------------------------------------
 
-    def _should_connect_on_start(self) -> bool:
-        # Hold the connection until the engine sets a system_instruction. This
-        # lets pre-call fetch populate template variables first.
-        return bool(self._settings.system_instruction)
+    async def setup(self, setup: FrameProcessorSetup):
+        # Skip the parent's immediate _connect(); we connect once the engine
+        # calls _update_settings(system_instruction=...) below.
+        await super(GeminiLiveLLMService, self).setup(setup)
 
-    async def _handle_changed_settings(self, changed: dict[str, Any]) -> set[str]:
-        if "system_instruction" not in changed:
-            return set()
-        if not self._session:
-            # First-time setting after deferred-connect.
-            await self._connect()
-        elif self._bot_is_responding:
-            # Bot is mid-turn — drain the reconnect when it ends so we don't
-            # cut the bot off mid-utterance.
-            self._reconnect_pending = True
+    async def _update_settings(self, delta: LLMSettings) -> dict[str, Any]:
+        # Bypass GeminiLiveLLMService._update_settings (which warns about every
+        # changed field including system_instruction) and call ai_service's
+        # implementation directly to just apply the delta and get the changed dict.
+        changed = await super(GeminiLiveLLMService, self)._update_settings(delta)
+        if not changed:
+            return changed
+        if "system_instruction" in changed:
+            if not self._session:
+                await self._connect()
+            elif self._bot_is_responding:
+                self._reconnect_pending = True
+            else:
+                await self._reconnect()
+            other = {k: v for k, v in changed.items() if k != "system_instruction"}
+            if other:
+                self._warn_unhandled_updated_settings(other)
         else:
-            await self._reconnect()
-        return {"system_instruction"}
+            self._warn_unhandled_updated_settings(changed)
+        return changed
 
     async def _run_or_defer_function_calls(
         self, function_calls_llm: list[FunctionCallFromLLM]
