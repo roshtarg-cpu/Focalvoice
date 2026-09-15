@@ -200,10 +200,9 @@ class DograhGeminiLiveLLMService(GeminiLiveLLMService):
             await self._process_completed_function_calls(send_new_results=True)
 
     # ------------------------------------------------------------------
-    # Session lifecycle: drop upstream's automatic reconnect-seed and
-    # initial-context-seed paths. The TTSSpeakFrame trigger and the
-    # function-call-result LLMContextFrame are the only paths that should
-    # kick off bot turns in the Dograh flow.
+    # Session lifecycle: mirror the upstream _handle_session_ready cases so
+    # that node-transition reconnects re-seed conversation history and trigger
+    # Gemini to continue speaking (instead of waiting for user input).
     # ------------------------------------------------------------------
 
     @traced_gemini_live(operation="llm_setup")
@@ -212,15 +211,29 @@ class DograhGeminiLiveLLMService(GeminiLiveLLMService):
             f"In _handle_session_ready self._run_llm_when_session_ready: {self._run_llm_when_session_ready}"
         )
         self._session = session
-        self._ready_for_realtime_input = True
         if self._run_llm_when_session_ready:
-            # Context arrived before session was ready — fulfil the queued
-            # initial response now.
+            # Initial connection: context arrived before session was ready.
             self._run_llm_when_session_ready = False
             await self._create_initial_response()
+        elif self._session_resumption_handle:
+            # Reconnect with session resumption: server restores state.
+            self._ready_for_realtime_input = True
+        elif self._context:
+            # Node-transition reconnect (no resumption handle): re-seed
+            # conversation history so the new session has full context.
+            # _create_initial_response sets _ready_for_realtime_input internally.
+            await self._create_initial_response(for_reconnect=True)
+        else:
+            # Initial connection before context arrives — wait for context.
+            pass
         await self._drain_pending_tool_results()
-        # Otherwise: no automatic seed. Reconnect after a session-resumption
-        # update relies on the server-side restored state; reconnects without
-        # a handle (e.g. node transitions before any handle was issued) are
-        # followed by a function-call-result LLMContextFrame which feeds the
-        # updated-context branch in _handle_context.
+        logger.debug("_handle_session_ready complete")
+
+    async def _create_initial_response(self, for_reconnect: bool = False):
+        await super()._create_initial_response(for_reconnect=for_reconnect)
+        # Gemini 3.x reconnects: base class seeds history but sets
+        # trigger_inference=False (waits for user to speak). For node
+        # transitions we want Gemini to continue the conversation proactively,
+        # so nudge it to generate a response now.
+        if for_reconnect and self._is_gemini_3 and self._session and not self._disconnecting:
+            await self._session.send_realtime_input(text=" ")
